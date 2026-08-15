@@ -5,406 +5,1093 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>樂齡益智遊戲館</title>
   <style>
-    :root {
-      --primary-color: #4a90e2;
-      --secondary-color: #f5a623;
-      --bg-color: #f4f7f6;
-      --card-bg: #ffffff;
-      --text-color: #333333;
-      --success-color: #2e7d32;
-      --error-color: #c62828;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: "Microsoft JhengHei", "微軟正黑體", Arial, sans-serif;
-    }
+    /* ===== 全域設定 ===== */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      font-family: "Microsoft JhengHei", "PingFang TC", "Noto Sans TC", sans-serif;
+      background: linear-gradient(135deg, #fdf6e3 0%, #e8f5e9 100%);
       min-height: 100vh;
-      padding: 15px;
+      color: #222;
+      touch-action: manipulation; /* 降低行動裝置點擊延遲與雙擊縮放 */
     }
 
-    .container {
-      width: 100%;
-      max-width: 600px;
-      background: var(--card-bg);
-      border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-      padding: 25px;
-      overflow: hidden;
+    /* ===== 標題列 ===== */
+    header {
+      background: linear-gradient(90deg, #1b5e20, #2e7d32);
+      color: white;
+      text-align: center;
+      padding: 24px 16px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
     }
+    header h1 { font-size: 2.5rem; letter-spacing: 3px; font-weight: 800; }
+    header p  { font-size: 1.25rem; margin-top: 8px; opacity: 0.95; }
 
-    /* 頂部列整合：標題與返回按鈕同列，不佔用獨立一行 */
-    .header-bar {
+    /* ===== 選單 ===== */
+    #menu {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid #eee;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 24px;
+      padding: 40px 20px;
+      max-width: 1000px;
+      margin: 0 auto;
     }
-
-    .header-bar h1 {
-      font-size: 1.8rem;
-      color: var(--primary-color);
-    }
-
-    .btn-return {
-      padding: 8px 16px;
-      font-size: 1rem;
-      font-weight: bold;
-      background-color: #888;
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      display: none; /* 預設在選單頁隱藏 */
-      transition: background-color 0.2s;
-    }
-
-    .btn-return:hover {
-      background-color: #666;
-    }
-
-    /* 反饋訊息固定高度，防畫面跳動 */
-    .feedback-message {
-      height: 40px;
-      line-height: 40px;
-      font-size: 1.5rem;
-      font-weight: bold;
+    .game-card {
+      background: white;
+      border-radius: 20px;
+      padding: 32px 20px;
+      width: 240px;
       text-align: center;
-      margin-bottom: 15px;
-      visibility: hidden;
-      opacity: 0;
-      transition: opacity 0.2s ease, visibility 0.2s ease;
-    }
-
-    .feedback-message.visible {
-      visibility: visible;
-      opacity: 1;
-    }
-
-    .feedback-message.correct {
-      color: var(--success-color);
-    }
-
-    .feedback-message.wrong {
-      color: var(--error-color);
-    }
-
-    /* 選單頁樣式 */
-    .menu-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 15px;
-    }
-
-    .menu-card {
-      background: #f0f7ff;
-      border: 2px solid var(--primary-color);
-      border-radius: 15px;
-      padding: 20px;
-      text-align: center;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
       cursor: pointer;
-      font-size: 1.4rem;
-      font-weight: bold;
-      color: var(--primary-color);
-      transition: all 0.2s ease;
+      transition: transform .2s, box-shadow .2s, border-color .2s;
+      border: 4px solid transparent;
+      user-select: none;
     }
-
-    .menu-card:hover {
-      background: var(--primary-color);
-      color: #fff;
-      transform: translateY(-2px);
+    .game-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 14px 32px rgba(0,0,0,0.18);
+      border-color: #43a047;
     }
+    .game-card .icon { font-size: 3.8rem; line-height: 1; }
+    .game-card h2   { font-size: 1.6rem; margin: 14px 0 8px; color: #1b5e20; font-weight: bold; }
+    .game-card p    { font-size: 1.05rem; color: #555; line-height: 1.5; }
 
-    /* 遊戲區域樣式 */
-    .game-area {
+    /* ===== 遊戲容器 ===== */
+    #game-area {
       display: none;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
     }
+
+    /* 返回按鈕 */
+    #back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #1b5e20;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      padding: 12px 28px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      transition: background .2s, transform .1s;
+    }
+    #back-btn:hover { background: #0d3b0e; transform: scale(1.03); }
 
     .game-title {
-      font-size: 1.4rem;
       text-align: center;
-      margin-bottom: 15px;
-      color: #555;
+      font-size: 2.2rem;
+      color: #1b5e20;
+      margin-bottom: 20px;
+      font-weight: 800;
     }
 
-    .question-box {
-      font-size: 2.8rem;
+    /* ===== 共用按鈕 ===== */
+    .btn {
+      display: inline-block;
+      padding: 16px 36px;
+      font-size: 1.3rem;
       font-weight: bold;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: transform .15s, opacity .15s;
+      font-family: inherit;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .btn:hover { transform: scale(1.05); opacity: .95; }
+    .btn-green  { background: #2e7d32; color: white; }
+    .btn-blue   { background: #1565c0; color: white; }
+
+    /* ===== 計分板 ===== */
+    .scoreboard {
+      display: flex;
+      justify-content: space-around;
+      background: #e8f5e9;
+      border-radius: 18px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      font-size: 1.3rem;
+      font-weight: bold;
+      border: 3px solid #81c784;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .score-item { text-align: center; }
+    .score-item span { font-weight: 800; color: #1b5e20; font-size: 1.8rem; margin-left: 4px; }
+
+    /* ===== 訊息框 ===== */
+    .msg-box {
       text-align: center;
-      margin: 20px 0;
-      letter-spacing: 2px;
+      padding: 16px;
+      border-radius: 14px;
+      font-size: 1.33rem;
+      margin: 16px 0;
+      font-weight: bold;
+    }
+    .msg-success { background: #c8e6c9; color: #1b5e20; border: 2px solid #81c784; }
+    .msg-fail    { background: #ffcdd2; color: #b71c1c; border: 2px solid #e57373; }
+    .msg-info    { background: #e3f2fd; color: #0d47a1; border: 2px solid #64b5f6; }
+
+    /* =========================================
+       遊戲 1 — 配對記憶
+    ========================================= */
+    #memory-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+    .mem-card {
+      aspect-ratio: 1;
+      border-radius: 16px;
+      font-size: 2.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: #2e7d32;
+      color: transparent;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+      transition: transform .2s, background .2s, color .2s;
+      user-select: none;
+      border: none;
+    }
+    .mem-card.flipped, .mem-card.matched {
+      background: #fffde7;
+      color: #333;
+      border: 3px solid #fbc02d;
+    }
+    .mem-card.matched { background: #c8e6c9; border-color: #81c784; cursor: default; }
+    .mem-card:hover:not(.matched) { transform: scale(1.05); }
+
+    /* =========================================
+       遊戲 2 — 數字排序
+    ========================================= */
+    #number-panel {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      margin: 24px 0;
+    }
+    .num-btn {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      font-size: 2rem;
+      font-weight: bold;
+      border: 4px solid #1565c0;
+      background: white;
+      color: #1565c0;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: background .15s, color .15s, transform .15s;
+    }
+    .num-btn:hover:not(:disabled) { background: #1565c0; color: white; transform: scale(1.1); }
+    .num-btn.correct { background: #2e7d32; border-color: #2e7d32; color: white; cursor: default; }
+    .num-btn.wrong   { background: #c62828; border-color: #c62828; color: white; }
+    #number-instruction {
+      text-align: center;
+      font-size: 1.5rem;
+      color: #0d47a1;
+      font-weight: bold;
+      margin-bottom: 12px;
     }
 
-    /* 四宮格選項 */
-    .options-grid {
+    /* =========================================
+       遊戲 3 — 顏色反應
+    ========================================= */
+    #color-display {
+      text-align: center;
+      margin: 24px 0;
+    }
+    #color-word {
+      font-size: 4.5rem;
+      font-weight: 900;
+      padding: 24px 40px;
+      border-radius: 20px;
+      background: #fff;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+      display: inline-block;
+      min-width: 280px;
+      letter-spacing: 8px;
+    }
+    #color-instruction {
+      font-size: 1.4rem;
+      color: #333;
+      text-align: center;
+      margin: 16px 0;
+    }
+    #color-choices {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 18px;
+    }
+    .color-choice-btn {
+      padding: 18px 36px;
+      border-radius: 16px;
+      font-size: 1.5rem;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      font-family: inherit;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transition: transform .15s;
+    }
+    .color-choice-btn:hover { transform: scale(1.08); }
+    #color-timer-bar-wrap {
+      background: #e0e0e0;
+      border-radius: 12px;
+      height: 22px;
+      margin: 16px 0;
+      overflow: hidden;
+    }
+    #color-timer-bar {
+      height: 100%;
+      background: #43a047;
+      transition: width .1s linear, background .3s;
+      width: 100%;
+    }
+
+    /* =========================================
+       遊戲 4 — 算術練習
+    ========================================= */
+    #math-question {
+      text-align: center;
+      font-size: 3.5rem;
+      font-weight: bold;
+      color: #0d47a1;
+      margin: 20px 0 16px;
+      background: white;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+    #math-choices {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 15px;
+      gap: 16px;
+      max-width: 480px;
+      margin: 0 auto;
     }
-
-    .option-btn {
-      padding: 20px;
-      font-size: 1.8rem;
+    .math-opt {
+      padding: 22px;
+      font-size: 2rem;
       font-weight: bold;
-      background: #fff;
-      border: 3px solid var(--primary-color);
-      border-radius: 15px;
-      color: var(--primary-color);
+      border-radius: 16px;
+      border: 4px solid #1565c0;
+      background: white;
+      color: #1565c0;
       cursor: pointer;
-      transition: background 0.1s, transform 0.1s;
+      font-family: inherit;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      transition: background .15s, color .15s, transform .15s;
     }
-
-    .option-btn:active {
-      transform: scale(0.98);
-      background: #e6f2ff;
-    }
-
-    /* 計分與控制 */
-    .score-board {
-      display: flex;
-      justify-content: space-between;
-      font-size: 1.2rem;
+    .math-opt:hover:not(:disabled) { background: #1565c0; color: white; transform: scale(1.04); }
+    .math-opt:disabled { cursor: not-allowed; opacity: 0.7; }
+    .math-opt.correct { background: #2e7d32; border-color: #2e7d32; color: white; }
+    .math-opt.wrong   { background: #c62828; border-color: #c62828; color: white; }
+    #math-progress {
+      text-align: center;
+      font-size: 1.25rem;
+      color: #555;
       margin-top: 20px;
-      color: #666;
+      font-weight: bold;
+    }
+
+    /* =========================================
+       遊戲 5 — 打地鼠
+    ========================================= */
+    #mole-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      max-width: 450px;
+      margin: 0 auto;
+    }
+    .mole-hole {
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: #5d4037;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: inset 0 8px 18px rgba(0,0,0,0.4), 0 4px 8px rgba(0,0,0,0.1);
+      user-select: none;
+      position: relative;
+      overflow: hidden;
+      border: 4px solid #3e2723;
+    }
+    .mole-hole .mole-inner {
+      position: absolute;
+      bottom: -110%;
+      transition: bottom .18s ease-out;
+      font-size: 3.2rem;
+      pointer-events: none;
+    }
+    .mole-hole.active .mole-inner { bottom: 10%; }
+    .mole-hole.bonk { background: #b71c1c; }
+    #mole-time-left {
+      text-align: center;
+      font-size: 1.35rem;
+      font-weight: bold;
+      margin-top: 20px;
+      color: #333;
+      background: #fff;
+      padding: 12px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    /* =========================================
+       遊戲結束畫面
+    ========================================= */
+    #result-screen {
+      display: none;
+      text-align: center;
+      padding: 40px 24px;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    #result-screen .trophy { font-size: 5.5rem; }
+    #result-screen h2 { font-size: 2.3rem; margin: 16px 0; color: #1b5e20; font-weight: 800; }
+    #result-screen p  { font-size: 1.4rem; color: #444; margin-bottom: 24px; line-height: 1.6; white-space: pre-line; }
+    #result-stars      { font-size: 3.2rem; margin: 12px 0; }
+
+    /* ===== 響應式微調 ===== */
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.8rem; }
+      header p { font-size: 1rem; }
+      .game-card { width: 100%; max-width: 280px; padding: 24px 16px; }
+      #memory-grid { gap: 10px; }
+      .mem-card { font-size: 2.2rem; }
+      #color-word { font-size: 3.2rem; min-width: 200px; padding: 16px; }
+      #math-question { font-size: 2.6rem; }
+      .math-opt { font-size: 1.6rem; padding: 16px; }
+      .scoreboard { font-size: 1rem; padding: 12px; }
+      .score-item span { font-size: 1.4rem; }
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <!-- 頂部列：遊戲標題 + 右側返回選單按鈕 -->
-    <div class="header-bar">
-      <h1 id="main-title">樂齡益智遊戲館</h1>
-      <button id="return-btn" class="btn-return" onclick="showMenu()">選單</button>
-    </div>
+<!-- ===== 標題 ===== -->
+<header>
+  <h1>🌿 樂齡益智遊戲館</h1>
+  <p>動動腦、練練手，快樂每一天！</p>
+</header>
 
-    <!-- 防跳動訊息提示區 (固定高度) -->
-    <div id="feedback" class="feedback-message"></div>
+<!-- ===== 遊戲選單 ===== -->
+<div id="menu">
+  <div class="game-card" onclick="startGame('memory')">
+    <div class="icon">🃏</div>
+    <h2>配對記憶</h2>
+    <p>翻牌找出相同圖案，訓練記憶力與專注力</p>
+  </div>
+  <div class="game-card" onclick="startGame('number')">
+    <div class="icon">🔢</div>
+    <h2>數字排序</h2>
+    <p>依照順序點擊數字，訓練邏輯與反應力</p>
+  </div>
+  <div class="game-card" onclick="startGame('color')">
+    <div class="icon">🎨</div>
+    <h2>顏色反應</h2>
+    <p>選出文字的「顏色」非內容，鍛鍊大腦靈活度</p>
+  </div>
+  <div class="game-card" onclick="startGame('math')">
+    <div class="icon">➕</div>
+    <h2>算術練習</h2>
+    <p>簡單加減法選答案，保持數字敏銳度</p>
+  </div>
+  <div class="game-card" onclick="startGame('mole')">
+    <div class="icon">🐹</div>
+    <h2>打地鼠</h2>
+    <p>快速點擊出現的地鼠，訓練手眼協調</p>
+  </div>
+</div>
 
-    <!-- 選單視圖 -->
-    <div id="menu-view" class="menu-grid">
-      <div class="menu-card" onclick="startGame('math')">加減算術練習</div>
-      <div class="menu-card" onclick="startGame('memory')">記憶雙胞胎</div>
-    </div>
+<!-- ===== 遊戲區域 ===== -->
+<div id="game-area">
+  <button id="back-btn" onclick="goHome()">⬅ 返回選單</button>
+  <div class="game-title" id="game-title"></div>
 
-    <!-- 算術練習視圖 -->
-    <div id="math-game" class="game-area">
-      <div class="game-title">請選擇正確的計算結果：</div>
-      <div id="math-question" class="question-box">0 + 0 = ?</div>
-      <div class="options-grid" id="math-options">
-        <!-- 4 個選項按鈕動態生成 -->
-      </div>
-      <div class="score-board">
-        <span>得分：<strong id="math-score">0</strong></span>
-        <span>連續正確：<strong id="math-streak">0</strong></span>
-      </div>
-    </div>
-
-    <!-- 記憶雙胞胎視圖 -->
-    <div id="memory-game" class="game-area">
-      <div class="game-title">點擊找出相同的配對：</div>
-      <div class="options-grid" id="memory-grid">
-        <!-- 記憶卡片動態生成 -->
-      </div>
-      <div class="score-board">
-        <span>已配對：<strong id="memory-score">0</strong> / 2</span>
-      </div>
-    </div>
+  <!-- 計分板 -->
+  <div class="scoreboard" id="scoreboard">
+    <div class="score-item">得分 <span id="score-val">0</span></div>
+    <div class="score-item">關卡 <span id="level-val">1</span></div>
+    <div class="score-item">連續 <span id="combo-val">0</span> 🔥</div>
   </div>
 
-  <script>
-    // 全域狀態
-    let currentScore = 0;
-    let streakCount = 0;
-    let mathCorrectAnswer = 0;
-    
-    // 記憶遊戲狀態
-    let memoryCards = ['🍎', '🍎', '🍌', '🍌'];
-    let flippedCards = [];
-    let matchedPairs = 0;
+  <!-- 訊息 -->
+  <div class="msg-box msg-info" id="msg-box" style="display:none"></div>
 
-    // 清除反饋訊息
-    function clearFeedback() {
-      const feedback = document.getElementById('feedback');
-      feedback.className = 'feedback-message';
-      feedback.textContent = '';
-    }
+  <!-- 各遊戲內容 -->
+  <div id="game-content"></div>
 
-    // 顯示反饋訊息 (不會推擠畫面)
-    function showFeedback(isCorrect, message = '') {
-      const feedback = document.getElementById('feedback');
-      feedback.textContent = message || (isCorrect ? '答對了！真棒！' : '不對喔，再試試！');
-      feedback.className = `feedback-message visible ${isCorrect ? 'correct' : 'wrong'}`;
-    }
+  <!-- 結果畫面 -->
+  <div id="result-screen">
+    <div class="trophy" id="result-trophy">🏆</div>
+    <h2 id="result-title">遊戲結束！</h2>
+    <div id="result-stars"></div>
+    <p id="result-text"></p>
+    <button class="btn btn-green" onclick="restartGame()">🔄 再玩一次</button>
+    &nbsp;&nbsp;
+    <button class="btn btn-blue" onclick="goHome()">🏠 回選單</button>
+  </div>
+</div>
 
-    // 洗牌演算法 (Fisher-Yates Shuffle) - 解決正確答案固定位置問題
-    function shuffle(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-      return array;
-    }
+<script>
+/* =============================================
+   設定 Google Apps Script Web App URL
+============================================= */
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxmIGNwZ1ttnXbp5OlVuc11ULcqgyZBh9c80cvkdv6dRCY1kzTF0YY5iIDCvomy9K1g/exec"; 
 
-    // 切換至選單
-    function showMenu() {
-      clearFeedback();
-      document.getElementById('main-title').textContent = '樂齡益智遊戲館';
-      document.getElementById('return-btn').style.display = 'none';
-      
-      document.getElementById('menu-view').style.display = 'grid';
-      document.getElementById('math-game').style.display = 'none';
-      document.getElementById('memory-game').style.display = 'none';
-    }
+let userIP = "未知IP";
 
-    // 開始遊戲
-    function startGame(gameType) {
-      clearFeedback();
-      document.getElementById('menu-view').style.display = 'none';
-      document.getElementById('return-btn').style.display = 'block';
+// 取得使用者真實 IP 地址
+fetch("https://api.ipify.org?format=json")
+  .then(res => res.json())
+  .then(data => { userIP = data.ip; })
+  .catch(() => { userIP = "無法獲取IP"; });
 
-      if (gameType === 'math') {
-        document.getElementById('main-title').textContent = '算術練習';
-        document.getElementById('math-game').style.display = 'block';
-        currentScore = 0;
-        streakCount = 0;
-        updateMathScore();
-        nextMathQuestion();
-      } else if (gameType === 'memory') {
-        document.getElementById('main-title').textContent = '記憶雙胞胎';
-        document.getElementById('memory-game').style.display = 'block';
-        initMemoryGame();
-      }
-    }
+// 發送紀錄至 Google Excel
+function logGameToGoogleSheet(gameTitleName) {
+  if(!GOOGLE_SCRIPT_URL) return;
 
-    /* --- 算術練習邏輯 --- */
-    function nextMathQuestion() {
-      // 隨機生成 1-20 加減法
-      const isAdd = Math.random() > 0.5;
-      const num1 = Math.floor(Math.random() * 15) + 1;
-      const num2 = Math.floor(Math.random() * 10) + 1;
-      
-      if (isAdd) {
-        mathCorrectAnswer = num1 + num2;
-        document.getElementById('math-question').textContent = `${num1} + ${num2} = ?`;
-      } else {
-        // 確保減法結果為正數
-        const max = Math.max(num1, num2);
-        const min = Math.min(num1, num2);
-        mathCorrectAnswer = max - min;
-        document.getElementById('math-question').textContent = `${max} - ${min} = ?`;
-      }
+  const payload = {
+    ip: userIP,
+    gameName: gameTitleName,
+    date: new Date().toLocaleString("zh-TW", { timeZone: "Asia/Taipei" })
+  };
 
-      // 產生 3 個干擾選項
-      const optionsSet = new Set([mathCorrectAnswer]);
-      while (optionsSet.size < 4) {
-        let wrongAnswer = mathCorrectAnswer + (Math.floor(Math.random() * 7) - 3);
-        if (wrongAnswer >= 0 && wrongAnswer !== mathCorrectAnswer) {
-          optionsSet.add(wrongAnswer);
-        }
-      }
+  fetch(GOOGLE_SCRIPT_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  }).catch(err => console.error("紀錄失敗:", err));
+}
 
-      // 將選項陣列進行洗牌，確保答案不固定在左上角
-      const shuffledOptions = shuffle(Array.from(optionsSet));
+/* =============================================
+   Web Audio API 音效生成器
+============================================= */
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
 
-      // 渲染選項按鈕
-      const optionsContainer = document.getElementById('math-options');
-      optionsContainer.innerHTML = '';
-      shuffledOptions.forEach(option => {
-        const btn = document.createElement('button');
-        btn.className = 'option-btn';
-        btn.textContent = option;
-        btn.onclick = () => checkMathAnswer(option);
-        optionsContainer.appendChild(btn);
-      });
-    }
+function initAudio() {
+  if (!audioCtx) {
+    audioCtx = new AudioContext();
+  }
+}
 
-    function checkMathAnswer(selectedOption) {
-      if (selectedOption === mathCorrectAnswer) {
-        currentScore += 10;
-        streakCount++;
-        showFeedback(true);
-        updateMathScore();
-        setTimeout(() => {
-          clearFeedback();
-          nextMathQuestion();
-        }, 800);
-      } else {
-        streakCount = 0;
-        showFeedback(false);
-        updateMathScore();
-      }
-    }
+function playSound(type) {
+  initAudio();
+  if (!audioCtx) return;
 
-    function updateMathScore() {
-      document.getElementById('math-score').textContent = currentScore;
-      document.getElementById('math-streak').textContent = streakCount;
-    }
+  const now = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
 
-    /* --- 記憶雙胞胎邏輯 --- */
-    function initMemoryGame() {
-      matchedPairs = 0;
-      flippedCards = [];
-      document.getElementById('memory-score').textContent = matchedPairs;
-      
-      const shuffled = shuffle([...memoryCards]);
-      const grid = document.getElementById('memory-grid');
-      grid.innerHTML = '';
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
 
-      shuffled.forEach((symbol, index) => {
-        const card = document.createElement('button');
-        card.className = 'option-btn';
-        card.textContent = '❓';
-        card.dataset.symbol = symbol;
-        card.dataset.index = index;
-        card.onclick = () => handleCardClick(card);
-        grid.appendChild(card);
-      });
-    }
+  if (type === 'click') {
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(400, now);
+    osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
+    gain.gain.setValueAtTime(0.1, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+    osc.start(now);
+    osc.stop(now + 0.05);
+  } else if (type === 'correct') {
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(523.25, now); // C5
+    osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
+    osc.frequency.setValueAtTime(783.99, now + 0.16); // G5
+    gain.gain.setValueAtTime(0.2, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+    osc.start(now);
+    osc.stop(now + 0.3);
+  } else if (type === 'wrong') {
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(220, now); // A3
+    osc.frequency.setValueAtTime(180, now + 0.1);
+    gain.gain.setValueAtTime(0.2, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+    osc.start(now);
+    osc.stop(now + 0.25);
+  } else if (type === 'win') {
+    const notes = [400, 500, 600, 800];
+    notes.forEach((freq, idx) => {
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.connect(g);
+      g.connect(audioCtx.destination);
+      o.type = 'sine';
+      o.frequency.setValueAtTime(freq, now + idx * 0.1);
+      g.gain.setValueAtTime(0.2, now + idx * 0.1);
+      g.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.1 + 0.2);
+      o.start(now + idx * 0.1);
+      o.stop(now + idx * 0.1 + 0.2);
+    });
+  }
+}
 
-    function handleCardClick(card) {
-      if (flippedCards.length >= 2 || card.textContent !== '❓') return;
+/* =============================================
+   全域狀態與工具函數
+============================================= */
+let currentGame = '';
+let score = 0, level = 1, combo = 0;
 
-      card.textContent = card.dataset.symbol;
-      flippedCards.push(card);
+function setScore(s){ score = s; document.getElementById('score-val').textContent = s; }
+function setLevel(l){ level = l; document.getElementById('level-val').textContent = l; }
+function setCombo(c){ combo = c; document.getElementById('combo-val').textContent = c; }
+function addScore(n){ setScore(Math.max(0, score + n)); }
 
-      if (flippedCards.length === 2) {
-        const [c1, c2] = flippedCards;
-        if (c1.dataset.symbol === c2.dataset.symbol) {
-          matchedPairs++;
-          document.getElementById('memory-score').textContent = matchedPairs;
-          showFeedback(true, '配對成功！');
-          flippedCards = [];
-          
-          if (matchedPairs === 2) {
-            setTimeout(() => {
-              showFeedback(true, '恭喜通關！');
-            }, 500);
+function showMsg(text, type='info', duration=1800){
+  const m = document.getElementById('msg-box');
+  m.className = 'msg-box msg-' + type;
+  m.textContent = text;
+  m.style.display = 'block';
+  clearTimeout(showMsg._t);
+  showMsg._t = setTimeout(()=> m.style.display='none', duration);
+}
+
+function goHome(){
+  playSound('click');
+  clearAllTimers();
+  document.getElementById('menu').style.display = 'flex';
+  document.getElementById('game-area').style.display = 'none';
+  document.getElementById('result-screen').style.display = 'none';
+  setScore(0); setLevel(1); setCombo(0);
+}
+
+function startGame(name){
+  playSound('click');
+  clearAllTimers();
+  currentGame = name;
+  score = 0; level = 1; combo = 0;
+  setScore(0); setLevel(1); setCombo(0);
+
+  document.getElementById('menu').style.display = 'none';
+  document.getElementById('game-area').style.display = 'block';
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('game-content').style.display = 'block';
+  document.getElementById('msg-box').style.display = 'none';
+
+  const titles = {
+    memory:'🃏 配對記憶', number:'🔢 數字排序',
+    color:'🎨 顏色反應', math:'➕ 算術練習', mole:'🐹 打地鼠'
+  };
+  const titleText = titles[name];
+  document.getElementById('game-title').textContent = titleText;
+
+  logGameToGoogleSheet(titleText);
+
+  if(name==='memory') initMemory();
+  else if(name==='number') initNumber();
+  else if(name==='color') initColor();
+  else if(name==='math') initMath();
+  else if(name==='mole') initMole();
+}
+
+function restartGame(){ playSound('click'); startGame(currentGame); }
+
+function clearAllTimers(){
+  if(window._colorTimer) clearInterval(window._colorTimer);
+  if(window._moleTimer) clearInterval(window._moleTimer);
+  if(window._moleCountdown) clearInterval(window._moleCountdown);
+  if(window._moleTimeout) clearTimeout(window._moleTimeout);
+  if(window._mathTimeout) clearTimeout(window._mathTimeout);
+  clearTimeout(showMsg._t);
+}
+
+function showResult(title, text, trophy='🏆'){
+  playSound('win');
+  clearAllTimers();
+  document.getElementById('game-content').style.display = 'none';
+  document.getElementById('msg-box').style.display = 'none';
+  const rs = document.getElementById('result-screen');
+  rs.style.display = 'block';
+  document.getElementById('result-trophy').textContent = trophy;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-text').textContent = text;
+  const stars = score >= 150 ? '⭐⭐⭐' : score >= 80 ? '⭐⭐' : '⭐';
+  document.getElementById('result-stars').textContent = stars;
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+function range(start, end) {
+  return Array.from({length: end-start+1}, (_,i)=> start+i);
+}
+
+/* =============================================
+   遊戲 1 — 配對記憶
+============================================= */
+const EMOJIS = ['🍎','🍊','🍋','🍇','🌸','🐱','🐶','🐘',
+                '🌈','⭐','🎵','🎁','🌺','🦋','🍀','🐸'];
+
+let memCards=[], memFlipped=[], memMatched=0, memLock=false, memTotal=0;
+
+function initMemory(){
+  memMatched=0; memFlipped=[]; memLock=false;
+  const pairsCount = 6 + Math.min(level-1, 2);
+  const count = Math.min(pairsCount, 8) * 2;
+  memTotal = count/2;
+  const chosen = EMOJIS.slice(0, count/2);
+  memCards = shuffle([...chosen, ...chosen]);
+
+  const gc = document.getElementById('game-content');
+  gc.innerHTML = `
+    <p style="text-align:center;font-size:1.2rem;color:#444;margin-bottom:16px;">
+      找出所有 <strong>${memTotal}</strong> 對相同的圖案！
+    </p>
+    <div id="memory-grid"></div>
+    <div style="text-align:center;margin-top:20px;font-size:1.2rem;font-weight:bold;color:#2e7d32;">
+      <span id="mem-pairs">已配對：0 / ${memTotal}</span>
+    </div>`;
+
+  const grid = document.getElementById('memory-grid');
+
+  memCards.forEach((emoji, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'mem-card';
+    btn.textContent = emoji;
+    btn.dataset.idx = i;
+    btn.dataset.emoji = emoji;
+    btn.addEventListener('click', onMemCardClick);
+    grid.appendChild(btn);
+  });
+}
+
+function onMemCardClick(e){
+  if(memLock) return;
+  const card = e.currentTarget;
+  if(card.classList.contains('flipped') || card.classList.contains('matched')) return;
+  
+  playSound('click');
+  card.classList.add('flipped');
+  memFlipped.push(card);
+  if(memFlipped.length === 2){
+    memLock = true;
+    const [a, b] = memFlipped;
+    if(a.dataset.emoji === b.dataset.emoji){
+      playSound('correct');
+      a.classList.add('matched'); b.classList.add('matched');
+      memMatched++;
+      setCombo(combo+1);
+      addScore(10 + combo*2);
+      showMsg('✅ 配對成功！+' + (10+combo*2) + '分', 'success');
+      document.getElementById('mem-pairs').textContent = `已配對：${memMatched} / ${memTotal}`;
+      memFlipped = []; memLock = false;
+      if(memMatched === memTotal){
+        setTimeout(()=>{
+          setLevel(level+1);
+          if(level > 3){
+            showResult('🎉 配對遊戲完成！', `最終得分：${score} 分`, '🏆');
           } else {
-            setTimeout(clearFeedback, 800);
+            showMsg(`🎊 第 ${level-1} 關完成！進入第 ${level} 關`, 'success', 2000);
+            setTimeout(initMemory, 2100);
           }
-        } else {
-          showFeedback(false, '不同圖案喔！');
-          setTimeout(() => {
-            c1.textContent = '❓';
-            c2.textContent = '❓';
-            flippedCards = [];
-            clearFeedback();
-          }, 1000);
-        }
+        }, 600);
       }
+    } else {
+      playSound('wrong');
+      setCombo(0);
+      setTimeout(()=>{
+        a.classList.remove('flipped'); b.classList.remove('flipped');
+        memFlipped = []; memLock = false;
+        showMsg('❌ 再試一次！', 'fail');
+      }, 900);
     }
-  </script>
+  }
+}
+
+/* =============================================
+   遊戲 2 — 數字排序
+============================================= */
+let numTarget = 1, numMax = 0;
+
+function initNumber(){
+  numTarget = 1;
+  numMax = 8 + (level-1)*2;
+  const nums = shuffle(range(1, numMax));
+  const gc = document.getElementById('game-content');
+  gc.innerHTML = `
+    <div id="number-instruction">請依序點擊 1 → ${numMax}</div>
+    <div id="number-panel"></div>`;
+  const panel = document.getElementById('number-panel');
+  nums.forEach(n => {
+    const btn = document.createElement('button');
+    btn.className = 'num-btn';
+    btn.textContent = n;
+    btn.dataset.n = n;
+    btn.addEventListener('click', onNumClick);
+    panel.appendChild(btn);
+  });
+}
+
+function onNumClick(e){
+  const btn = e.currentTarget;
+  const n = parseInt(btn.dataset.n);
+  if(n === numTarget){
+    playSound('correct');
+    btn.classList.add('correct');
+    btn.disabled = true;
+    setCombo(combo+1);
+    addScore(5 + combo);
+    numTarget++;
+    if(numTarget > numMax){
+      showMsg(`🎉 第 ${level} 關完成！`, 'success', 1500);
+      setLevel(level+1);
+      setTimeout(()=>{
+        if(level > 4) showResult('🎉 數字排序完成！', `最終得分：${score} 分`);
+        else initNumber();
+      }, 1600);
+    } else {
+      document.getElementById('number-instruction').textContent =
+        `請依序點擊 ${numTarget} → ${numMax}`;
+    }
+  } else {
+    playSound('wrong');
+    btn.classList.add('wrong');
+    setTimeout(()=> btn.classList.remove('wrong'), 500);
+    setCombo(0);
+    addScore(-2);
+    showMsg(`❌ 應該點數字 ${numTarget} 哦！`, 'fail');
+  }
+}
+
+/* =============================================
+   遊戲 3 — 顏色反應
+============================================= */
+const COLORS = [
+  { name:'紅色', hex:'#e53935' },
+  { name:'藍色', hex:'#1e88e5' },
+  { name:'綠色', hex:'#43a047' },
+  { name:'黃色', hex:'#fbc02d' },
+  { name:'紫色', hex:'#8e24aa' },
+  { name:'橙色', hex:'#f57c00' },
+];
+let colorTimeLeft=0, colorTotal=0, colorCorrect=0;
+
+function initColor(){
+  colorTotal=0; colorCorrect=0;
+  const totalQ = 8 + (level-1)*2;
+  const gc = document.getElementById('game-content');
+  gc.innerHTML = `
+    <div id="color-instruction">請選出文字顯示的<strong>「顏色」</strong>（忽視字的本身意思）</div>
+    <div id="color-timer-bar-wrap"><div id="color-timer-bar"></div></div>
+    <div id="color-display"><div id="color-word">準備</div></div>
+    <div id="color-choices"></div>
+    <p style="text-align:center;margin-top:16px;color:#555;font-size:1.2rem;font-weight:bold;" id="color-progress">
+      第 1 / ${totalQ} 題
+    </p>`;
+  nextColorQ(totalQ);
+}
+
+function nextColorQ(totalQ){
+  if(colorTotal >= totalQ){
+    const winMsg = colorCorrect === totalQ ? '太厲害了！完全難不倒您！' : 
+                   colorCorrect >= totalQ*0.7 ? '很棒！思緒非常敏捷！' : '不錯，多練習會更上手！';
+    showResult('🎨 顏色反應完成！',
+      `答對 ${colorCorrect}/${totalQ} 題\n${winMsg}\n得分：${score}`,'🎨');
+    return;
+  }
+  colorTotal++;
+  clearInterval(window._colorTimer);
+
+  const textColor = COLORS[Math.floor(Math.random()*COLORS.length)];
+  let inkColor;
+  do { inkColor = COLORS[Math.floor(Math.random()*COLORS.length)]; }
+  while(inkColor.name === textColor.name);
+
+  document.getElementById('color-word').textContent = textColor.name;
+  document.getElementById('color-word').style.color = inkColor.hex;
+  document.getElementById('color-progress').textContent =
+    `第 ${colorTotal} / ${totalQ} 題`;
+
+  const choices = [inkColor];
+  const pool = COLORS.filter(c=> c.name !== inkColor.name);
+  shuffle(pool).slice(0,3).forEach(c=> choices.push(c));
+  shuffle(choices);
+
+  const choicesDiv = document.getElementById('color-choices');
+  choicesDiv.innerHTML = '';
+  choices.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'color-choice-btn';
+    btn.textContent = c.name;
+    btn.style.background = c.hex;
+    btn.style.color = '#fff';
+    btn.onclick = () => onColorClick(c, inkColor, totalQ);
+    choicesDiv.appendChild(btn);
+  });
+
+  const timeLimit = Math.max(3000, 6000 - (level-1)*500);
+  colorTimeLeft = timeLimit;
+  const bar = document.getElementById('color-timer-bar');
+  bar.style.width = '100%';
+  bar.style.background = '#43a047';
+  const tick = 100;
+  window._colorTimer = setInterval(()=>{
+    colorTimeLeft -= tick;
+    const pct = Math.max(0, colorTimeLeft/timeLimit*100);
+    bar.style.width = pct+'%';
+    bar.style.background = pct > 50 ? '#43a047' : pct > 20 ? '#fbc02d' : '#e53935';
+    if(colorTimeLeft <= 0){
+      playSound('wrong');
+      clearInterval(window._colorTimer);
+      showMsg('⏱ 時間到！', 'fail', 700);
+      setTimeout(() => nextColorQ(totalQ), 800);
+    }
+  }, tick);
+}
+
+function onColorClick(chosen, correct, totalQ){
+  clearInterval(window._colorTimer);
+  const choiceBtns = document.querySelectorAll('#color-choices button');
+  choiceBtns.forEach(b => b.onclick = null);
+  
+  if(chosen.name === correct.name){
+    playSound('correct');
+    colorCorrect++;
+    setCombo(combo+1);
+    addScore(15 + combo*3);
+    showMsg('✅ 正確！', 'success', 800);
+  } else {
+    playSound('wrong');
+    setCombo(0);
+    addScore(-3);
+    showMsg('❌ 答錯囉！應該是 ' + correct.name, 'fail', 800);
+  }
+  setTimeout(()=> nextColorQ(totalQ), 900);
+}
+
+/* =============================================
+   遊戲 4 — 算術練習
+============================================= */
+let mathTotal=0, mathCurrent=0, mathCorrect=0, mathAnswering=false;
+
+function initMath(){
+  mathTotal = 10 + (level-1)*2;
+  mathCurrent = 0;
+  mathCorrect = 0;
+  mathAnswering = false;
+  const gc = document.getElementById('game-content');
+  gc.innerHTML = `
+    <div id="math-question">準備中...</div>
+    <div id="math-choices"></div>
+    <div id="math-progress">第 1 / ${mathTotal} 題</div>`;
+  nextMathQ();
+}
+
+function nextMathQ(){
+  if(mathCurrent >= mathTotal){
+    const accuracy = Math.round(mathCorrect/mathTotal*100);
+    const msg = accuracy >= 90 ? '太棒了！計算能力非常優異！' :
+                accuracy >= 70 ? '不錯！保持頭腦活絡！' : '多練習幾次，會越來越快喔！';
+    showResult('➕ 算術練習完成！',
+      `答對 ${mathCorrect}/${mathTotal} 題\n正確率 ${accuracy}%\n${msg}\n得分：${score}`,'🧮');
+    return;
+  }
+  
+  mathCurrent++;
+  mathAnswering = false;
+  clearTimeout(window._mathTimeout);
+  document.getElementById('math-progress').textContent = `第 ${mathCurrent} / ${mathTotal} 題`;
+
+  const isAdd = Math.random() > 0.3;
+  let numA = Math.floor(Math.random() * 10) + 5 + (level * 2); 
+  let numB = Math.floor(Math.random() * 8) + 2;
+  
+  if (!isAdd && numA < numB) {
+    const temp = numA; numA = numB; numB = temp;
+  }
+  
+  const answer = isAdd ? numA + numB : numA - numB;
+  
+  document.getElementById('math-question').textContent = 
+    isAdd ? `${numA} + ${numB} = ?` : `${numA} - ${numB} = ?`;
+
+  const options = [answer];
+  while(options.length < 4){
+    const offset = (Math.floor(Math.random() * 4) + 1) * (Math.random() > 0.5 ? 1 : -1);
+    const wrong = answer + offset;
+    if (wrong >= 0 && !options.includes(wrong)) {
+      options.push(wrong);
+    }
+  }
+  const shuffledOptions = shuffle(options);
+
+  const choicesDiv = document.getElementById('math-choices');
+  choicesDiv.innerHTML = '';
+  shuffledOptions.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'math-opt';
+    btn.textContent = opt;
+    btn.disabled = false;
+    btn.onclick = () => onMathClick(opt, answer, btn);
+    choicesDiv.appendChild(btn);
+  });
+}
+
+function onMathClick(chosen, correct, btnEl){
+  if(mathAnswering) return;
+  mathAnswering = true;
+  
+  const choiceBtns = document.querySelectorAll('#math-choices button');
+  choiceBtns.forEach(b => b.disabled = true);
+  
+  if(chosen === correct){
+    playSound('correct');
+    mathCorrect++;
+    setCombo(combo+1);
+    addScore(10 + combo*2);
+    btnEl.classList.add('correct');
+    showMsg('✅ 答對了！', 'success', 600);
+  } else {
+    playSound('wrong');
+    setCombo(0);
+    addScore(-2);
+    btnEl.classList.add('wrong');
+    choiceBtns.forEach(b => {
+      if(parseInt(b.textContent) === correct) b.classList.add('correct');
+    });
+    showMsg('❌ 算錯囉！答案是 ' + correct, 'fail', 600);
+  }
+  window._mathTimeout = setTimeout(nextMathQ, 800);
+}
+
+/* =============================================
+   遊戲 5 — 打地鼠 (修復與最佳化)
+============================================= */
+let moleScore=0, moleTimeRemain=0, moleActiveHole=null, moleMissed=0;
+
+function initMole(){
+  moleScore = 0;
+  moleTimeRemain = 30;
+  moleMissed = 0;
+  moleActiveHole = null;
+  
+  const gc = document.getElementById('game-content');
+  gc.innerHTML = `
+    <p style="text-align:center;color:#444;font-size:1.2rem;margin-bottom:16px;">
+      30 秒內看到地鼠冒出來，就快速點擊牠！
+    </p>
+    <div id="mole-grid"></div>
+    <div id="mole-time-left">⏱ 剩餘時間：30 秒 | 打中：0 隻 | 漏掉：0 隻</div>`;
+
+  const grid = document.getElementById('mole-grid');
+  for(let i=0; i<9; i++){
+    const hole = document.createElement('button');
+    hole.className = 'mole-hole';
+    hole.innerHTML = '<div class="mole-inner">🐭</div>';
+    hole.addEventListener('click', (e) => onMoleClick(e));
+    grid.appendChild(hole);
+  }
+
+  startMoleGame();
+}
+
+function startMoleGame(){
+  clearInterval(window._moleCountdown);
+  clearInterval(window._moleTimer);
+
+  // 時間倒數器
+  window._moleCountdown = setInterval(() => {
+    moleTimeRemain--;
+    updateMoleUI();
+    
+    if(moleTimeRemain <= 0){
+      clearAllTimers();
+      const holes = document.querySelectorAll('.mole-hole');
+      holes.forEach(h => {
+        h.classList.remove('active');
+      });
+      const total = moleScore + moleMissed;
+      const accuracy = total > 0 ? Math.round(moleScore / total * 100) : 0;
+      showResult('🐹 打地鼠完成！',
+        `打中 ${moleScore} 隻 | 漏掉 ${moleMissed} 隻\n命中率 ${accuracy}%\n得分：${score}`,'🐹');
+    }
+  }, 1000);
+
+  // 產生地鼠迴圈
+  const spawnSpeed = Math.max(700, 1200 - (level-1)*150);
+  spawnMole();
+  window._moleTimer = setInterval(spawnMole, spawnSpeed);
+}
+
+function spawnMole(){
+  // 如果前一隻地鼠還在 active，代表漏掉了
+  if(moleActiveHole && moleActiveHole.classList.contains('active')) {
+    moleActiveHole.classList.remove('active');
+    moleMissed++;
+    updateMoleUI();
+  }
+
+  const holes = document.querySelectorAll('.mole-hole');
+  const randomIndex = Math.floor(Math.random() * 9);
+  moleActiveHole = holes[randomIndex];
+  moleActiveHole.classList.add('active');
+
+  // 地鼠自動縮回定時器
+  clearTimeout(window._moleTimeout);
+  window._moleTimeout = setTimeout(() => {
+    if(moleActiveHole && moleActiveHole.classList.contains('active')) {
+      moleActiveHole.classList.remove('active');
+      moleMissed++;
+      updateMoleUI();
+      moleActiveHole = null;
+    }
+  }, Math.max(600, 1000 - (level-1)*100));
+}
+
+function onMoleClick(e){
+  e.preventDefault();
+  const hole = e.currentTarget;
+  if(!hole.classList.contains('active')) return;
+  
+  clearTimeout(window._moleTimeout);
+  playSound('correct');
+  hole.classList.add('bonk');
+  hole.classList.remove('active');
+  moleActiveHole = null;
+  
+  moleScore++;
+  setCombo(combo+1);
+  addScore(5 + combo);
+  
+  updateMoleUI();
+  setTimeout(() => hole.classList.remove('bonk'), 250);
+}
+
+function updateMoleUI() {
+  const el = document.getElementById('mole-time-left');
+  if(el) {
+    el.textContent = `⏱ 剩餘時間：${moleTimeRemain} 秒 | 打中：${moleScore} 隻 | 漏掉：${moleMissed} 隻`;
+  }
+}
+
+</script>
+
 </body>
 </html>
