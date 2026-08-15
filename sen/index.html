@@ -432,32 +432,53 @@
 /* =============================================
    設定 Google Apps Script Web App URL
 ============================================= */
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxmIGNwZ1ttnXbp5OlVuc11ULcqgyZBh9c80cvkdv6dRCY1kzTF0YY5iIDCvomy9K1g/exec"; // 請貼上步驟一獲取的 URL
+// 1. 修正結尾為 /exec
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxmIGNwZ1ttnXbp5OlVuc11ULcqgyZBh9c80cvkdv6dRCY1kzTF0YY5iIDCvomy9K1g/exec"; 
 
-let userIP = "未知IP";
+let userIP = null;
 
-// 取得使用者真實 IP 地址
-fetch("https://api.ipify.org?format=json")
-  .then(res => res.json())
-  .then(data => { userIP = data.ip; })
-  .catch(() => { userIP = "無法獲取IP"; });
+// 取得 IP 的獨立函式
+async function getUserIP() {
+  if (userIP) return userIP; // 如果已經抓過 IP，就直接使用快取
+  
+  try {
+    const res = await fetch("https://api.ipify.org?format=json");
+    const data = await res.json();
+    userIP = data.ip;
+  } catch (err) {
+    userIP = "無法獲取IP";
+  }
+  return userIP;
+}
 
-// 發送紀錄至 Google Excel
-function logGameToGoogleSheet(gameTitleName) {
-  if(!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL === "https://script.google.com/macros/s/AKfycbxmIGNwZ1ttnXbp5OlVuc11ULcqgyZBh9c80cvkdv6dRCY1kzTF0YY5iIDCvomy9K1g/exec") return;
+// 頁面載入時預先抓取 IP
+getUserIP();
+
+// 發送紀錄至 Google Sheet
+async function logGameToGoogleSheet(gameTitleName) {
+  // 確定有填寫 URL 才執行
+  if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("YOUR_SCRIPT_ID")) return;
+
+  // 確保拿到 IP 後才繼續（如果預先抓取尚未完成，這裡會等待）
+  const ip = await getUserIP();
 
   const payload = {
-    ip: userIP,
+    ip: ip,
     gameName: gameTitleName,
     date: new Date().toLocaleString("zh-TW", { timeZone: "Asia/Taipei" })
   };
 
-  fetch(GOOGLE_SCRIPT_URL, {
-    method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  }).catch(err => console.error("紀錄失敗:", err));
+  try {
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      // 建議使用 text/plain，既能通過 Google Apps Script 解析，又不會觸發 CORS 阻擋
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    });
+    console.log("紀錄發送成功！");
+  } catch (err) {
+    console.error("紀錄失敗:", err);
+  }
 }
 
 /* =============================================
