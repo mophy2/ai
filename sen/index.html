@@ -26,7 +26,11 @@
     }
     header h1 { font-size: 2.5rem; letter-spacing: 3px; font-weight: 800; }
     header p  { font-size: 1.25rem; margin-top: 8px; opacity: 0.95; }
-
+    
+    /* 用來隱藏畫面的 Class */
+    .hidden {
+      display: none !important;
+    }
     /* ===== 選單 ===== */
     #menu {
       display: flex;
@@ -461,7 +465,7 @@
 </div>
 
 <!-- ===== 遊戲區域 ===== -->
-<div id="game-area">
+<div id="game-area" class="hidden">
   <div id="game-header">
     <button id="back-btn" onclick="goHome()">⬅ 返回選單</button>
     <div class="game-title" id="game-title"></div>
@@ -614,6 +618,7 @@ function goHome(){
   clearAllTimers();
   document.getElementById('menu').style.display = 'flex';
   document.getElementById('game-area').style.display = 'none';
+  document.getElementById('game-header').style.display = 'none';
   document.getElementById('result-screen').style.display = 'none';
   setScore(0); setLevel(1); setCombo(0);
 }
