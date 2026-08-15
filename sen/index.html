@@ -58,6 +58,15 @@
     .game-card h2   { font-size: 1.6rem; margin: 14px 0 8px; color: #1b5e20; font-weight: bold; }
     .game-card p    { font-size: 1.05rem; color: #555; line-height: 1.5; }
 
+    /* ===== 新增：頂部導覽容器（讓返回按鈕與標題並排） ===== */
+    #game-header {
+      display: flex;
+      align-items: center;  /* 垂直置中對齊 */
+      justify-content: space-between; /* 若想讓標題居中或按鈕靠左，可用此屬性 */
+      gap: 16px;            /* 按鈕與標題間距 */
+      margin-bottom: 20px;  /* 整個頂部區域與下方遊戲內容的間距 */
+    }
+    
     /* ===== 遊戲容器 ===== */
     #game-area {
       /* display: flex;
@@ -65,9 +74,11 @@
       margin: 0 auto;
       padding: 20px 16px 40px;
       display: flex;         /* 1. 將子元素轉為水平排列 */
-      
-      align-items: center;   /* 2. 讓按鈕與文字垂直居中對齊 */
-      gap: 12px;             /* 3. 設定按鈕與旁邊文字的間距 */
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+      display: flex;
+      flex-direction: column; /* 讓遊戲區域整體維持垂直往下排 */
     }
 
     /* 返回按鈕 */
@@ -86,19 +97,39 @@
       margin-bottom: 20px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.15);
       transition: background .2s, transform .1s;
-*/
+    */
       display: inline-flex;
-      white-space: nowrap; /* 避免文字換行 */
-      margin-bottom: 0;   /* 移除可能的底部外距 */
+      align-items: center;
+      gap: 8px;
+      background: #1b5e20;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      padding: 10px 20px;   /* 稍微調整一下內距，避免太巨大 */
+      font-size: 1rem;      /* 調整字體大小更適合頂部列 */
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 0;     /* 關鍵修正：移除外距，才不會被推下去！ */
+      white-space: nowrap;  /* 關鍵修正：防止按鈕文字斷行 */
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      transition: background .2s, transform .1s;
+
     }
     #back-btn:hover { background: #0d3b0e; transform: scale(1.03); }
 
     .game-title {
-      text-align: center;
+      /* text-align: center;
       font-size: 2.2rem;
       color: #1b5e20;
       margin-bottom: 20px;
       font-weight: 800;
+*/
+      font-size: 1.8rem;
+      color: #1b5e20;
+      margin: 0;           /* 關鍵修正：移除原本的 margin-bottom: 20px */
+      font-weight: 800;
+      flex-grow: 1;        /* 讓標題佔滿剩餘空間 */
+      text-align: center;  /* 標題文字置中 */
     }
 
     /* ===== 共用按鈕 ===== */
@@ -431,8 +462,10 @@
 
 <!-- ===== 遊戲區域 ===== -->
 <div id="game-area">
-  <button id="back-btn" onclick="goHome()">⬅ 返回選單</button>
-  <div class="game-title" id="game-title"></div>
+  <div id="game-header">
+    <button id="back-btn" onclick="goHome()">⬅ 返回選單</button>
+    <div class="game-title" id="game-title"></div>
+  </div>
 
   <!-- 計分板 -->
   <div class="scoreboard" id="scoreboard">
