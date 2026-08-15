@@ -60,15 +60,19 @@
 
     /* ===== 遊戲容器 ===== */
     #game-area {
-      display: none;
+      /* display: flex;
       max-width: 800px;
       margin: 0 auto;
       padding: 20px 16px 40px;
+      display: flex;         /* 1. 將子元素轉為水平排列 */
+      
+      align-items: center;   /* 2. 讓按鈕與文字垂直居中對齊 */
+      gap: 12px;             /* 3. 設定按鈕與旁邊文字的間距 */
     }
 
     /* 返回按鈕 */
     #back-btn {
-      display: inline-flex;
+      /* display: inline-flex;
       align-items: center;
       gap: 8px;
       background: #1b5e20;
@@ -82,6 +86,10 @@
       margin-bottom: 20px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.15);
       transition: background .2s, transform .1s;
+*/
+      display: inline-flex;
+      white-space: nowrap; /* 避免文字換行 */
+      margin-bottom: 0;   /* 移除可能的底部外距 */
     }
     #back-btn:hover { background: #0d3b0e; transform: scale(1.03); }
 
