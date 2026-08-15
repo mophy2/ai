@@ -58,14 +58,7 @@
     .game-card h2   { font-size: 1.6rem; margin: 14px 0 8px; color: #1b5e20; font-weight: bold; }
     .game-card p    { font-size: 1.05rem; color: #555; line-height: 1.5; }
 
-    /* ===== 新增：頂部導覽容器（讓返回按鈕與標題並排） ===== */
-    #game-header {
-      display: flex;
-      align-items: center;  /* 垂直置中對齊 */
-      justify-content: space-between; /* 若想讓標題居中或按鈕靠左，可用此屬性 */
-      gap: 16px;            /* 按鈕與標題間距 */
-      margin-bottom: 20px;  /* 整個頂部區域與下方遊戲內容的間距 */
-    }
+
     
     /* ===== 遊戲容器 ===== */
     #game-area {
@@ -79,6 +72,15 @@
       padding: 20px 16px 40px;
       display: flex;
       flex-direction: column; /* 讓遊戲區域整體維持垂直往下排 */
+    }
+
+        /* ===== 新增：頂部導覽容器（讓返回按鈕與標題並排） ===== */
+    #game-header {
+      display: flex;
+      align-items: center;  /* 垂直置中對齊 */
+      justify-content: space-between; /* 若想讓標題居中或按鈕靠左，可用此屬性 */
+      gap: 16px;            /* 按鈕與標題間距 */
+      margin-bottom: 20px;  /* 整個頂部區域與下方遊戲內容的間距 */
     }
 
     /* 返回按鈕 */
@@ -614,7 +616,6 @@ function goHome(){
   clearAllTimers();
   document.getElementById('menu').style.display = 'flex';
   document.getElementById('game-area').style.display = 'none';
-  document.getElementById('game-header').style.display = 'none';
   document.getElementById('result-screen').style.display = 'none';
   setScore(0); setLevel(1); setCombo(0);
 }
@@ -628,7 +629,6 @@ function startGame(name){
 
   document.getElementById('menu').style.display = 'none';
   document.getElementById('game-area').style.display = 'block';
-  document.getElementById('game-header').style.display = 'block';
   document.getElementById('result-screen').style.display = 'none';
   document.getElementById('game-content').style.display = 'block';
   document.getElementById('msg-box').style.display = 'none';
