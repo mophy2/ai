@@ -16,6 +16,10 @@
 
 <style>
 
+/* =========================================
+   基本
+========================================= */
+
 * {
   box-sizing: border-box;
 }
@@ -32,13 +36,18 @@ body {
     "Microsoft JhengHei",
     serif;
 
-  color: #f8eedb;
+  color: #f7edd8;
+
+
+  /*
+   佛教氛圍背景
+  */
 
   background:
 
     linear-gradient(
-      rgba(20,14,9,.82),
-      rgba(20,14,9,.90)
+      rgba(20, 14, 9, .82),
+      rgba(20, 14, 9, .92)
     ),
 
     url("https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1600&q=80");
@@ -54,6 +63,10 @@ body {
 }
 
 
+/* =========================================
+   主容器
+========================================= */
+
 .container {
 
   width: 100%;
@@ -67,11 +80,11 @@ body {
   border-radius: 20px;
 
   background:
-    rgba(35,25,17,.93);
+    rgba(35, 25, 17, .94);
 
   border:
     1px solid
-    rgba(226,184,91,.45);
+    rgba(226, 184, 91, .45);
 
   box-shadow:
     0 20px 60px
@@ -79,6 +92,10 @@ body {
 
 }
 
+
+/* =========================================
+   標題
+========================================= */
 
 h1 {
 
@@ -101,14 +118,18 @@ h1 {
 
   text-align: center;
 
-  color: #cdbd9e;
+  color:
+    #cdbd9e;
 
-  margin-bottom: 25px;
+  margin-bottom:
+    25px;
 
 }
 
 
-/* 姓名 */
+/* =========================================
+   姓名
+========================================= */
 
 label {
 
@@ -116,14 +137,15 @@ label {
 
   margin-bottom: 8px;
 
-  color: #e5c36c;
+  color:
+    #e5c36c;
 
   font-weight: bold;
 
 }
 
 
-input {
+#names {
 
   width: 100%;
 
@@ -146,22 +168,29 @@ input {
 }
 
 
-input:focus {
+#names:focus {
 
   border-color:
     #e9c66d;
 
-}
-
-
-input:disabled {
-
-  opacity: .55;
+  box-shadow:
+    0 0 10px
+    rgba(233,198,109,.15);
 
 }
 
 
-/* 設定 */
+#names:disabled {
+
+  opacity:
+    .5;
+
+}
+
+
+/* =========================================
+   設定
+========================================= */
 
 .settings {
 
@@ -191,7 +220,8 @@ input:disabled {
 
 .setting-title {
 
-  color: #d6bf91;
+  color:
+    #d6bf91;
 
   font-size: 14px;
 
@@ -204,48 +234,65 @@ select {
 
   width: 100%;
 
-  padding: 8px;
+  padding: 9px;
 
   border-radius: 7px;
 
-  background: #403126;
+  background:
+    #403126;
 
-  color: white;
+  color:
+    white;
 
-  border: 1px solid #816b4a;
+  border:
+    1px solid #816b4a;
 
 }
 
 
-/* 經文 */
+/* =========================================
+   區塊
+========================================= */
 
 .section {
 
-  margin-top: 25px;
+  margin-top:
+    25px;
 
 }
 
 
 .section-title {
 
-  color: #e5c36c;
+  color:
+    #e5c36c;
 
-  font-size: 20px;
+  font-size:
+    20px;
 
-  font-weight: bold;
+  font-weight:
+    bold;
 
-  margin-bottom: 10px;
+  margin-bottom:
+    10px;
 
 }
 
 
+/* =========================================
+   經文
+========================================= */
+
 .scripture {
 
-  padding: 20px;
+  padding:
+    20px;
 
-  min-height: 180px;
+  min-height:
+    180px;
 
-  border-radius: 12px;
+  border-radius:
+    12px;
 
   background:
     rgba(0,0,0,.25);
@@ -254,31 +301,36 @@ select {
     1px solid
     rgba(255,255,255,.10);
 
-  line-height: 2.15;
+  line-height:
+    2.15;
 
-  font-size: 19px;
-
-  white-space: pre-line;
+  font-size:
+    19px;
 
 }
 
 
-/* 每段經文 */
+/*
+   每一段
+*/
 
 .scripture-line {
 
-  padding: 5px 8px;
+  padding:
+    5px 8px;
 
-  border-radius: 7px;
+  border-radius:
+    7px;
 
   transition:
-    background .3s,
-    color .3s;
+    .3s;
 
 }
 
 
-/* 目前朗讀 */
+/*
+   正在朗讀
+*/
 
 .scripture-line.active {
 
@@ -288,16 +340,24 @@ select {
   color:
     #ffe18a;
 
+  box-shadow:
+    0 0 12px
+    rgba(221,180,72,.08);
+
 }
 
 
-/* 按鈕 */
+/* =========================================
+   按鈕
+========================================= */
 
 .buttons {
 
-  display: flex;
+  display:
+    flex;
 
-  gap: 12px;
+  gap:
+    12px;
 
   margin:
     25px 0;
@@ -307,172 +367,226 @@ select {
 
 button {
 
-  flex: 1;
+  flex:
+    1;
 
-  padding: 15px;
+  padding:
+    15px;
 
-  border: none;
+  border:
+    none;
 
-  border-radius: 10px;
+  border-radius:
+    10px;
 
-  font-size: 17px;
+  font-size:
+    17px;
 
-  cursor: pointer;
+  cursor:
+    pointer;
 
-  font-family: inherit;
+  font-family:
+    inherit;
 
 }
 
 
 .start {
 
-  background: #ae8535;
+  background:
+    #ae8535;
 
-  color: white;
+  color:
+    white;
 
 }
 
 
 .start:hover {
 
-  background: #c69d48;
+  background:
+    #c69d48;
 
 }
 
 
 .stop {
 
-  background: #603b35;
+  background:
+    #603b35;
 
-  color: white;
+  color:
+    white;
 
 }
 
 
 .stop:hover {
 
-  background: #795048;
+  background:
+    #795048;
 
 }
 
 
-/* 目前狀態 */
+/* =========================================
+   狀態
+========================================= */
 
 .status-box {
 
-  text-align: center;
+  text-align:
+    center;
 
-  padding: 15px;
+  padding:
+    15px;
 
-  border-radius: 10px;
+  border-radius:
+    10px;
 
   background:
     rgba(174,133,53,.12);
 
-  color: #efd278;
+  color:
+    #efd278;
 
-  line-height: 1.8;
+  line-height:
+    1.8;
 
 }
 
 
-/* 迴向文 */
+/* =========================================
+   迴向文
+========================================= */
 
 .dedication {
 
-  padding: 20px;
+  padding:
+    20px;
 
-  border-radius: 12px;
+  border-radius:
+    12px;
 
   background:
     rgba(0,0,0,.25);
 
-  line-height: 2.2;
+  line-height:
+    2.2;
 
-  font-size: 18px;
+  font-size:
+    18px;
 
-  white-space: pre-line;
-
-}
-
-
-/* 音樂 */
-
-.music-control {
-
-  margin-top: 20px;
-
-  text-align: center;
+  white-space:
+    pre-line;
 
 }
 
 
-.music-control label {
+/* =========================================
+   音樂
+========================================= */
 
-  display: inline-block;
+.music-area {
 
-  margin-right: 10px;
+  display:
+    flex;
+
+  justify-content:
+    center;
+
+  align-items:
+    center;
+
+  gap:
+    10px;
+
+  margin-top:
+    20px;
 
 }
 
 
-.music-control input {
+.music-area button {
 
-  width: auto;
+  flex:
+    none;
+
+  padding:
+    9px 18px;
+
+  font-size:
+    15px;
 
 }
 
 
-/* 頁尾 */
+/* =========================================
+   Footer
+========================================= */
 
 .footer {
 
-  margin-top: 25px;
+  margin-top:
+    25px;
 
-  text-align: center;
+  text-align:
+    center;
 
-  font-size: 13px;
+  font-size:
+    13px;
 
-  color: #988a72;
+  color:
+    #988a72;
 
 }
 
 
-/* 手機 */
+/* =========================================
+   手機
+========================================= */
 
 @media(max-width:650px) {
 
   .container {
 
-    padding: 20px 14px;
+    padding:
+      20px 14px;
 
   }
 
 
   h1 {
 
-    font-size: 24px;
+    font-size:
+      24px;
+
+    letter-spacing:
+      3px;
 
   }
 
 
   .settings {
 
-    grid-template-columns: 1fr;
+    grid-template-columns:
+      1fr;
 
   }
 
 
   .buttons {
 
-    flex-direction: column;
+    flex-direction:
+      column;
 
   }
 
 
   .scripture {
 
-    font-size: 17px;
+    font-size:
+      17px;
 
   }
 
@@ -489,6 +603,10 @@ button {
 <div class="container">
 
 
+<!-- ======================================
+     標題
+====================================== -->
+
 <h1>
   南無大慈大悲觀世音菩薩
 </h1>
@@ -499,7 +617,9 @@ button {
 </div>
 
 
-<!-- 姓名 -->
+<!-- ======================================
+     姓名
+====================================== -->
 
 <label>
   往生者姓名
@@ -513,7 +633,9 @@ button {
 >
 
 
-<!-- 設定 -->
+<!-- ======================================
+     設定
+====================================== -->
 
 <div class="settings">
 
@@ -585,7 +707,7 @@ button {
     <select id="speechRate">
 
       <option value="0.55">
-        慢
+        很慢
       </option>
 
       <option value="0.65" selected>
@@ -607,7 +729,9 @@ button {
 </div>
 
 
-<!-- 經文 -->
+<!-- ======================================
+     經文
+====================================== -->
 
 <div class="section">
 
@@ -627,7 +751,9 @@ button {
 </div>
 
 
-<!-- 按鈕 -->
+<!-- ======================================
+     按鈕
+====================================== -->
 
 <div class="buttons">
 
@@ -651,7 +777,9 @@ button {
 </div>
 
 
-<!-- 狀態 -->
+<!-- ======================================
+     狀態
+====================================== -->
 
 <div
   id="statusBox"
@@ -662,19 +790,16 @@ button {
 </div>
 
 
-<!-- 音樂 -->
+<!-- ======================================
+     背景音樂
+====================================== -->
 
-<div class="music-control">
-
-  <label>
-    背景佛樂
-  </label>
+<div class="music-area">
 
   <button
-    onclick="toggleMusic()"
-    style="flex:none;padding:8px 18px">
+    onclick="toggleMusic()">
 
-    ♪ 開／關音樂
+    ♪ 開／關佛樂
 
   </button>
 
@@ -686,6 +811,10 @@ button {
   loop
   preload="auto">
 
+  <!--
+    把下面網址換成你的佛教純音樂 MP3
+  -->
+
   <source
     src="YOUR_MUSIC_URL.mp3"
     type="audio/mpeg">
@@ -693,7 +822,9 @@ button {
 </audio>
 
 
-<!-- 迴向 -->
+<!-- ======================================
+     迴向文
+====================================== -->
 
 <div class="section">
 
@@ -738,9 +869,24 @@ button {
 <script>
 
 
-/* ==================================
-   全域變數
-================================== */
+/************************************************
+ * ① GAS URL
+ *
+ * ★★★★★
+ *
+ * 把你的 GAS Web App URL 貼在這裡
+ *
+ ************************************************/
+
+
+const GAS_URL =
+  "https://script.google.com/macros/s/AKfycbx-m3hPdwjxxGj8te9zfokZmIe-UK5KZeKE9hiF0_QLlOOX3qmm-r3EqzDIRVadOowU/exec";
+
+
+/************************************************
+ * 全域變數
+ ************************************************/
+
 
 let scriptureLines = [];
 
@@ -757,9 +903,10 @@ let voices = [];
 let selectedVoice = null;
 
 
-/* ==================================
-   語音
-================================== */
+/************************************************
+ * ② 載入瀏覽器語音
+ ************************************************/
+
 
 function loadVoices() {
 
@@ -767,78 +914,46 @@ function loadVoices() {
     speechSynthesis.getVoices();
 
 
-  if (!voices.length) return;
+  if (!voices.length) {
 
-
-  /*
-   優先：
-   台灣中文
-   女性語音
-  */
-
-  const femaleWords = [
-
-    "female",
-    "woman",
-    "女",
-    "美",
-    "雅",
-    "婷",
-    "Mei",
-    "Ting"
-
-  ];
-
-
-  selectedVoice =
-
-    voices.find(function(v) {
-
-      return (
-
-        /zh-TW/i.test(v.lang)
-
-        &&
-
-        femaleWords.some(
-          function(word) {
-
-            return v.name
-              .toLowerCase()
-              .includes(
-                word.toLowerCase()
-              );
-
-          }
-        )
-
-      );
-
-    });
-
-
-  if (!selectedVoice) {
-
-    selectedVoice =
-
-      voices.find(function(v) {
-
-        return /zh-TW/i
-          .test(v.lang);
-
-      });
+    return;
 
   }
 
 
+  /*
+   * 優先台灣中文
+   */
+
+  const taiwanVoice =
+    voices.find(function(voice) {
+
+      return /zh-TW/i
+        .test(voice.lang);
+
+    });
+
+
+  if (taiwanVoice) {
+
+    selectedVoice =
+      taiwanVoice;
+
+  }
+
+
+  /*
+   * 如果沒有台灣中文
+   * 找其他中文
+   */
+
   if (!selectedVoice) {
 
     selectedVoice =
-
-      voices.find(function(v) {
+      voices.find(function(voice) {
 
         return /zh/i
-          .test(v.lang);
+          .test(voice.lang);
 
       });
 
@@ -854,58 +969,108 @@ speechSynthesis.onvoiceschanged =
 loadVoices();
 
 
-/* ==================================
-   取得 Google Sheet
-================================== */
-
-function loadContent() {
-
-  google.script.run
-
-    .withSuccessHandler(function(data) {
-
-      scriptureLines =
-        data || [];
+/************************************************
+ * ③ 從 GAS 取得經文
+ ************************************************/
 
 
-      renderScripture();
+async function loadContent() {
 
-    })
+  try {
 
-    .withFailureHandler(function(error) {
+    const response =
+      await fetch(
+        GAS_URL +
+        "?action=getContent"
+      );
 
-      document
-        .getElementById("scripture")
-        .innerText =
-        "取得經文失敗：" +
+
+    if (!response.ok) {
+
+      throw new Error(
+        "GAS HTTP " +
+        response.status
+      );
+
+    }
+
+
+    const result =
+      await response.json();
+
+
+    if (!result.success) {
+
+      throw new Error(
+        result.error ||
+        "GAS 發生錯誤"
+      );
+
+    }
+
+
+    scriptureLines =
+      result.data || [];
+
+
+    renderScripture();
+
+
+  } catch (error) {
+
+    console.error(error);
+
+
+    document
+      .getElementById(
+        "scripture"
+      )
+      .innerText =
+
+        "取得經文失敗。\n\n" +
+        "請檢查 GAS URL、部署權限及網路連線。\n\n" +
         error.message;
 
-    })
-
-    .getContent();
+  }
 
 }
 
 
-/* ==================================
-   顯示經文
-================================== */
+/************************************************
+ * ④ 顯示經文
+ ************************************************/
+
 
 function renderScripture() {
 
   const box =
-    document
-      .getElementById("scripture");
+    document.getElementById(
+      "scripture"
+    );
 
 
   box.innerHTML = "";
+
+
+  if (
+    !scriptureLines.length
+  ) {
+
+    box.innerText =
+      "目前沒有經文內容。";
+
+    return;
+
+  }
 
 
   scriptureLines.forEach(
     function(text, index) {
 
       const div =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
 
       div.className =
@@ -928,23 +1093,27 @@ function renderScripture() {
 }
 
 
-/* ==================================
-   姓名
-================================== */
+/************************************************
+ * ⑤ 取得姓名
+ ************************************************/
+
 
 function getNames() {
 
   return document
-    .getElementById("names")
+    .getElementById(
+      "names"
+    )
     .value
     .trim();
 
 }
 
 
-/* ==================================
-   迴向文
-================================== */
+/************************************************
+ * ⑥ 建立迴向文
+ ************************************************/
+
 
 function buildDedication() {
 
@@ -973,9 +1142,10 @@ function buildDedication() {
 }
 
 
-/* ==================================
-   更新迴向文
-================================== */
+/************************************************
+ * ⑦ 前台顯示迴向文
+ ************************************************/
+
 
 function updateDedication() {
 
@@ -984,7 +1154,9 @@ function updateDedication() {
 
 
   document
-    .getElementById("dedication")
+    .getElementById(
+      "dedication"
+    )
     .textContent =
 
 `南無大慈大悲觀世音菩薩，
@@ -1004,11 +1176,16 @@ function updateDedication() {
 }
 
 
-/* ==================================
-   開始
-================================== */
+/************************************************
+ * ⑧ 開始誦讀
+ ************************************************/
 
-function startReading() {
+
+async function startReading() {
+
+  /*
+   * 先停止上一個朗讀
+   */
 
   stopReading();
 
@@ -1023,157 +1200,211 @@ function startReading() {
       "請先輸入往生者姓名。"
     );
 
+    document
+      .getElementById(
+        "names"
+      )
+      .focus();
+
     return;
 
   }
 
 
   /*
-   每次開始重新取得 Google Sheet
-  */
+   * 每次開始
+   * 重新取得最新 Google Sheet
+   */
 
-  document
-    .getElementById("statusBox")
-    .innerText =
-      "正在取得最新經文……";
-
-
-  updateDedication();
+  updateStatus(
+    "正在取得最新經文……"
+  );
 
 
-  /*
-   鎖定姓名
-  */
+  try {
 
-  document
-    .getElementById("names")
-    .disabled = true;
+    const response =
+      await fetch(
+        GAS_URL +
+        "?action=getContent"
+      );
 
 
-  /*
-   設定遍數
-  */
+    const result =
+      await response.json();
 
-  totalRounds =
-    Number(
+
+    if (
+      !result.success
+    ) {
+
+      throw new Error(
+        result.error ||
+        "取得經文失敗"
+      );
+
+    }
+
+
+    scriptureLines =
+      result.data || [];
+
+
+    if (
+      !scriptureLines.length
+    ) {
+
+      throw new Error(
+        "content 工作表沒有內容"
+      );
+
+    }
+
+
+    /*
+     * 重新顯示
+     */
+
+    renderScripture();
+
+
+    /*
+     * 重新組合迴向
+     */
+
+    updateDedication();
+
+
+    /*
+     * 設定遍數
+     */
+
+    totalRounds =
+      Number(
+        document
+          .getElementById(
+            "repeatCount"
+          )
+          .value
+      );
+
+
+    const mode =
       document
-        .getElementById("repeatCount")
-        .value
+        .getElementById(
+          "readingMode"
+        )
+        .value;
+
+
+    /*
+     * 持續循環
+     */
+
+    if (
+      mode === "loop"
+    ) {
+
+      totalRounds =
+        Infinity;
+
+    }
+
+
+    currentLine = 0;
+
+    currentRound = 1;
+
+    isReading = true;
+
+
+    /*
+     * 鎖定姓名
+     */
+
+    document
+      .getElementById(
+        "names"
+      )
+      .disabled = true;
+
+
+    /*
+     * 播放佛樂
+     */
+
+    const music =
+      document.getElementById(
+        "bgMusic"
+      );
+
+
+    music.volume =
+      0.18;
+
+
+    music.play()
+      .catch(function(error) {
+
+        console.log(
+          "背景音樂需要使用者操作",
+          error
+        );
+
+      });
+
+
+    /*
+     * 紀錄使用者
+     */
+
+    logVisitor(
+      names
     );
 
 
-  const mode =
-    document
-      .getElementById("readingMode")
-      .value;
+    /*
+     * 開始
+     */
+
+    readNext();
 
 
-  if (mode === "loop") {
+  } catch (error) {
 
-    totalRounds =
-      Infinity;
+    console.error(error);
+
+
+    stopReading();
+
+
+    alert(
+      "無法取得 Google Sheet 經文：\n\n" +
+      error.message
+    );
+
+  }
+
+}
+
+
+/************************************************
+ * ⑨ 朗讀下一段
+ ************************************************/
+
+
+function readNext() {
+
+  if (!isReading) {
+
+    return;
 
   }
 
 
   /*
-   重新取得
-  */
-
-  google.script.run
-
-    .withSuccessHandler(
-      function(data) {
-
-        scriptureLines =
-          data || [];
-
-
-        if (!scriptureLines.length) {
-
-          stopReading();
-
-          alert(
-            "content 工作表沒有經文內容。"
-          );
-
-          return;
-
-        }
-
-
-        renderScripture();
-
-
-        currentLine = 0;
-
-        currentRound = 1;
-
-        isReading = true;
-
-
-        /*
-         背景音樂
-        */
-
-        const music =
-          document
-            .getElementById(
-              "bgMusic"
-            );
-
-
-        music.volume = 0.18;
-
-
-        music.play()
-          .catch(function(){});
-
-
-        /*
-         記錄訪客
-        */
-
-        logVisitor(
-          names
-        );
-
-
-        readNext();
-
-      }
-    )
-
-    .withFailureHandler(
-      function(error) {
-
-        stopReading();
-
-        alert(
-          "取得 Google Sheet 失敗：" +
-          error.message
-        );
-
-      }
-    )
-
-    .getContent();
-
-}
-
-
-/* ==================================
-   朗讀下一段
-================================== */
-
-function readNext() {
-
-  if (!isReading) return;
-
-
-  /*
-   經文還沒完成
-  */
+   * 經文還沒讀完
+   */
 
   if (
     currentLine <
@@ -1193,9 +1424,12 @@ function readNext() {
 
 
     updateStatus(
+
       "正在誦讀第 " +
       currentRound +
-      " 遍"
+      " 遍\n\n" +
+      text
+
     );
 
 
@@ -1217,31 +1451,39 @@ function readNext() {
 
 
   /*
-   經文完成
-   朗讀迴向
-  */
+   * 經文完成
+   * 開始迴向
+   */
 
   clearHighlight();
 
 
   updateStatus(
+
     "第 " +
     currentRound +
-    " 遍：正在誦讀迴向文"
+    " 遍\n\n" +
+    "正在誦讀迴向文"
+
   );
 
 
   speak(
+
     buildDedication(),
+
     function() {
 
-      if (!isReading)
+      if (!isReading) {
+
         return;
+
+      }
 
 
       /*
-       本輪完成
-      */
+       * 已達指定遍數
+       */
 
       if (
         currentRound >=
@@ -1256,8 +1498,8 @@ function readNext() {
 
 
       /*
-       下一輪
-      */
+       * 下一遍
+       */
 
       currentRound++;
 
@@ -1266,22 +1508,27 @@ function readNext() {
       readNext();
 
     }
+
   );
 
 }
 
 
-/* ==================================
-   語音
-================================== */
+/************************************************
+ * ⑩ 語音朗讀
+ ************************************************/
+
 
 function speak(
   text,
   callback
 ) {
 
-  if (!isReading)
+  if (!isReading) {
+
     return;
+
+  }
 
 
   speechSynthesis.cancel();
@@ -1293,9 +1540,17 @@ function speak(
     );
 
 
+  /*
+   * 中文
+   */
+
   utterance.lang =
     "zh-TW";
 
+
+  /*
+   * 語速
+   */
 
   utterance.rate =
     Number(
@@ -1308,8 +1563,8 @@ function speak(
 
 
   /*
-   柔和女聲
-  */
+   * 柔和
+   */
 
   utterance.pitch =
     1.05;
@@ -1319,7 +1574,13 @@ function speak(
     1;
 
 
-  if (selectedVoice) {
+  /*
+   * 使用中文語音
+   */
+
+  if (
+    selectedVoice
+  ) {
 
     utterance.voice =
       selectedVoice;
@@ -1327,23 +1588,40 @@ function speak(
   }
 
 
+  /*
+   * 完成
+   */
+
   utterance.onend =
     function() {
 
-      if (isReading) {
+      if (!isReading) {
 
-        setTimeout(
-          callback,
-          400
-        );
+        return;
 
       }
+
+
+      setTimeout(
+        callback,
+        400
+      );
 
     };
 
 
+  /*
+   * 錯誤
+   */
+
   utterance.onerror =
-    function() {
+    function(error) {
+
+      console.error(
+        "語音錯誤：",
+        error
+      );
+
 
       if (isReading) {
 
@@ -1364,9 +1642,10 @@ function speak(
 }
 
 
-/* ==================================
-   高亮目前經文
-================================== */
+/************************************************
+ * ⑪ 高亮經文
+ ************************************************/
+
 
 function highlightLine(index) {
 
@@ -1374,27 +1653,39 @@ function highlightLine(index) {
 
 
   const line =
-    document
-      .getElementById(
-        "line-" + index
-      );
-
-
-  if (line) {
-
-    line.classList.add(
-      "active"
+    document.getElementById(
+      "line-" + index
     );
 
 
-    line.scrollIntoView({
-      behavior: "smooth",
-      block: "center"
-    });
+  if (!line) {
+
+    return;
 
   }
 
+
+  line.classList.add(
+    "active"
+  );
+
+
+  line.scrollIntoView({
+
+    behavior:
+      "smooth",
+
+    block:
+      "center"
+
+  });
+
 }
+
+
+/************************************************
+ * ⑫ 清除高亮
+ ************************************************/
 
 
 function clearHighlight() {
@@ -1403,20 +1694,23 @@ function clearHighlight() {
     .querySelectorAll(
       ".scripture-line"
     )
-    .forEach(function(el) {
+    .forEach(
+      function(element) {
 
-      el.classList.remove(
-        "active"
-      );
+        element.classList.remove(
+          "active"
+        );
 
-    });
+      }
+    );
 
 }
 
 
-/* ==================================
-   狀態
-================================== */
+/************************************************
+ * ⑬ 狀態
+ ************************************************/
+
 
 function updateStatus(text) {
 
@@ -1425,15 +1719,15 @@ function updateStatus(text) {
       "statusBox"
     )
     .innerText =
-
       text;
 
 }
 
 
-/* ==================================
-   完成
-================================== */
+/************************************************
+ * ⑭ 完成
+ ************************************************/
+
 
 function finishReading() {
 
@@ -1443,11 +1737,13 @@ function finishReading() {
   speechSynthesis.cancel();
 
 
-  document
-    .getElementById(
+  const music =
+    document.getElementById(
       "bgMusic"
-    )
-    .pause();
+    );
+
+
+  music.pause();
 
 
   document
@@ -1461,15 +1757,16 @@ function finishReading() {
 
 
   updateStatus(
-    "誦讀圓滿，功德迴向完成。"
+    "🙏 誦讀圓滿\n\n功德迴向完成"
   );
 
 }
 
 
-/* ==================================
-   結束
-================================== */
+/************************************************
+ * ⑮ 結束
+ ************************************************/
+
 
 function stopReading() {
 
@@ -1480,10 +1777,9 @@ function stopReading() {
 
 
   const music =
-    document
-      .getElementById(
-        "bgMusic"
-      );
+    document.getElementById(
+      "bgMusic"
+    );
 
 
   music.pause();
@@ -1506,27 +1802,35 @@ function stopReading() {
 }
 
 
-/* ==================================
-   音樂
-================================== */
+/************************************************
+ * ⑯ 開關佛樂
+ ************************************************/
+
 
 function toggleMusic() {
 
   const music =
-    document
-      .getElementById(
-        "bgMusic"
-      );
+    document.getElementById(
+      "bgMusic"
+    );
 
 
   if (
     music.paused
   ) {
 
-    music.volume = 0.18;
+    music.volume =
+      0.18;
+
 
     music.play()
-      .catch(function(){});
+      .catch(function(error) {
+
+        console.log(
+          error
+        );
+
+      });
 
   } else {
 
@@ -1537,23 +1841,12 @@ function toggleMusic() {
 }
 
 
-/* ==================================
-   IP + 使用紀錄
-================================== */
-
-async function logVisitor(names) {
-
-  let ip =
-    "未知";
+/************************************************
+ * ⑰ 取得公開 IP
+ ************************************************/
 
 
-  /*
-   使用公開 IP 查詢服務
-
-   注意：
-   這個 IP 是瀏覽器
-   查到的公開網路 IP。
-  */
+async function getPublicIP() {
 
   try {
 
@@ -1563,67 +1856,95 @@ async function logVisitor(names) {
       );
 
 
+    if (
+      !response.ok
+    ) {
+
+      return "無法取得";
+
+    }
+
+
     const data =
       await response.json();
 
 
-    if (data.ip) {
+    return (
+      data.ip ||
+      "無法取得"
+    );
 
-      ip = data.ip;
-
-    }
 
   } catch (error) {
 
-    ip = "無法取得";
+    console.log(
+      "IP取得失敗",
+      error
+    );
+
+
+    return "無法取得";
 
   }
 
+}
+
+
+/************************************************
+ * ⑱ 紀錄訪客
+ ************************************************/
+
+
+async function logVisitor(
+  names
+) {
 
   /*
-   送給 GAS doPost
+   * 取得 IP
+   */
 
-   由於 GAS Web App
-   本身不能直接讀訪客 IP，
-   因此由前端傳入。
-  */
+  const ip =
+    await getPublicIP();
+
+
+  /*
+   * 建立資料
+   */
+
+  const payload = {
+
+    ip:
+      ip,
+
+    pageName:
+      "普渡迴向誦讀",
+
+    names:
+      names,
+
+    userAgent:
+      navigator.userAgent
+
+  };
+
+
+  /*
+   * POST 到 GAS
+   *
+   * 使用 text/plain
+   * 避免觸發複雜 CORS preflight
+   */
 
   try {
 
-    const payload = {
+    await fetch(
 
-      ip: ip,
+      GAS_URL,
 
-      pageName:
-        "普渡迴向誦讀",
-
-      names:
-        names,
-
-      userAgent:
-        navigator.userAgent
-
-    };
-
-
-    /*
-     注意：
-
-     這裡不能使用
-     google.script.run
-     呼叫 doPost。
-
-     doPost 是 HTTP POST 入口。
-
-     因此使用目前 GAS 網頁網址。
-    */
-
-
-    fetch(
-      window.location.href,
       {
 
-        method: "POST",
+        method:
+          "POST",
 
         headers: {
 
@@ -1635,11 +1956,19 @@ async function logVisitor(names) {
         body:
           JSON.stringify(
             payload
-          )
+          ),
+
+        mode:
+          "no-cors"
 
       }
-    )
-    .catch(function(){});
+
+    );
+
+
+    console.log(
+      "訪客紀錄已送出"
+    );
 
 
   } catch (error) {
@@ -1654,21 +1983,25 @@ async function logVisitor(names) {
 }
 
 
-/* ==================================
-   姓名輸入
-================================== */
+/************************************************
+ * ⑲ 姓名即時更新
+ ************************************************/
+
 
 document
-  .getElementById("names")
+  .getElementById(
+    "names"
+  )
   .addEventListener(
     "input",
     updateDedication
   );
 
 
-/* ==================================
-   初始
-================================== */
+/************************************************
+ * ⑳ 網頁啟動
+ ************************************************/
+
 
 loadContent();
 
