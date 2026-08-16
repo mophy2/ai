@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width,
+               initial-scale=1.0">
+
+<title>普渡迴向誦讀</title>
+
+<style>
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+
+  margin: 0;
+
+  min-height: 100vh;
+
+  font-family:
+    "Noto Serif TC",
+    "Microsoft JhengHei",
+    serif;
+
+  background:
+    linear-gradient(
+      rgba(20, 15, 10, 0.72),
+      rgba(20, 15, 10, 0.82)
+    ),
+    url("https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1600&q=80");
+
+  background-size: cover;
+
+  background-position: center;
+
+  background-attachment: fixed;
+
+  color: #f8f0df;
+
+  padding: 25px 15px;
+}
+
+
+.container {
+
+  max-width: 850px;
+
+  margin: auto;
+
+  background:
+    rgba(35, 25, 18, 0.90);
+
+  border: 1px solid
+    rgba(230, 190, 100, 0.45);
+
+  border-radius: 18px;
+
+  padding: 30px;
+
+  box-shadow:
+    0 15px 50px
+    rgba(0,0,0,0.55);
+}
+
+
+h1 {
+
+  text-align: center;
+
+  margin-top: 0;
+
+  font-size: 30px;
+
+  letter-spacing: 5px;
+
+  color: #f5d58a;
+}
+
+
+.subtitle {
+
+  text-align: center;
+
+  color: #d9c7a2;
+
+  margin-bottom: 25px;
+
+  font-size: 15px;
+}
+
+
+/* 姓名 */
+
+.name-label {
+
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: #f2d48b;
+
+  font-weight: bold;
+}
+
+
+.name-input {
+
+  width: 100%;
+
+  padding: 14px;
+
+  border-radius: 10px;
+
+  border: 1px solid
+    #a98954;
+
+  background:
+    rgba(255,255,255,0.08);
+
+  color: white;
+
+  font-size: 18px;
+
+  outline: none;
+}
+
+
+.name-input:focus {
+
+  border-color: #e8c46e;
+
+  box-shadow:
+    0 0 8px
+    rgba(232,196,110,0.35);
+}
+
+
+/* 經文 */
+
+.section {
+
+  margin-top: 25px;
+}
+
+
+.section-title {
+
+  font-size: 19px;
+
+  color: #e8c46e;
+
+  margin-bottom: 10px;
+
+  font-weight: bold;
+}
+
+
+.scripture {
+
+  background:
+    rgba(0,0,0,0.25);
+
+  border-radius: 12px;
+
+  border: 1px solid
+    rgba(255,255,255,0.12);
+
+  padding: 20px;
+
+  line-height: 2.1;
+
+  font-size: 19px;
+
+  min-height: 150px;
+
+  white-space: pre-line;
+
+  color: #f5ead4;
+}
+
+
+/* 目前誦讀 */
+
+.reading {
+
+  margin-top: 20px;
+
+  padding: 15px;
+
+  text-align: center;
+
+  border-radius: 10px;
+
+  background:
+    rgba(180,130,40,0.16);
+
+  color: #f4d477;
+
+  min-height: 25px;
+}
+
+
+/* 按鈕 */
+
+.buttons {
+
+  display: flex;
+
+  gap: 15px;
+
+  justify-content: center;
+
+  margin: 25px 0;
+}
+
+
+button {
+
+  border: none;
+
+  border-radius: 10px;
+
+  padding: 14px 30px;
+
+  font-size: 17px;
+
+  cursor: pointer;
+
+  font-family: inherit;
+
+  transition: 0.2s;
+}
+
+
+.start {
+
+  background: #b68b32;
+
+  color: white;
+}
+
+
+.start:hover {
+
+  background: #d1a746;
+
+  transform: translateY(-2px);
+}
+
+
+.stop {
+
+  background: #633d36;
+
+  color: white;
+}
+
+
+.stop:hover {
+
+  background: #805048;
+
+  transform: translateY(-2px);
+}
+
+
+.music {
+
+  text-align: center;
+
+  color: #cbb997;
+
+  font-size: 14px;
+
+  margin-top: 10px;
+}
+
+
+.status {
+
+  text-align: center;
+
+  font-size: 14px;
+
+  color: #b8a98c;
+
+  margin-top: 12px;
+}
+
+
+/* 手機 */
+
+@media(max-width:600px) {
+
+  .container {
+
+    padding: 20px 15px;
+  }
+
+  h1 {
+
+    font-size: 25px;
+  }
+
+  .scripture {
+
+    font-size: 17px;
+
+    line-height: 2;
+  }
+
+  .buttons {
+
+    flex-direction: column;
+  }
+
+  button {
+
+    width: 100%;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+  <h1>南無大悲觀世音菩薩</h1>
+
+  <div class="subtitle">
+    普渡誦經迴向
+  </div>
+
+
+  <!-- 姓名輸入 -->
+
+  <label class="name-label">
+    往生者姓名
+  </label>
+
+  <input
+    id="names"
+    class="name-input"
+    type="text"
+    placeholder="多人請用逗號分隔，例如：王○○，李○○，陳○○"
+  >
+
+
+  <!-- 經文 -->
+
+  <div class="section">
+
+    <div class="section-title">
+      《般若波羅蜜多心經》
+    </div>
+
+    <div
+      id="scripture"
+      class="scripture">
+      正在取得誦經內容……
+    </div>
+
+  </div>
+
+
+  <!-- 控制 -->
+
+  <div class="buttons">
+
+    <button
+      class="start"
+      onclick="startReading()">
+
+      ▶ 開始誦讀
+
+    </button>
+
+
+    <button
+      class="stop"
+      onclick="stopReading()">
+
+      ■ 結束誦讀
+
+    </button>
+
+  </div>
+
+
+  <!-- 誦讀狀態 -->
+
+  <div
+    id="readingStatus"
+    class="reading">
+
+    尚未開始誦讀
+
+  </div>
+
+
+  <!-- 背景音樂 -->
+
+  <div class="music">
+
+    ♪ 佛教經典純音樂
+
+  </div>
+
+
+  <!-- 背景音樂 -->
+
+  <audio
+    id="bgMusic"
+    loop
+    preload="auto">
+
+    <source
+      src="YOUR_MUSIC_URL.mp3"
+      type="audio/mpeg">
+
+  </audio>
+
+
+  <!-- 迴向文 -->
+
+  <div class="section">
+
+    <div class="section-title">
+      迴向文
+    </div>
+
+    <div
+      id="dedication"
+      class="scripture">
+
+      南無大慈大悲觀世音菩薩，
+      南無大慈大悲觀世音菩薩，
+      南無大慈大悲觀世音菩薩。
+
+      願以此誦唸《般若波羅蜜多心經》之功德，
+      專為往生者 [] 迴向。
+
+      祈願仗此佛力加被，
+      業障消除，
+      福慧增長，
+      離苦得樂，
+      蒙佛接引，
+      往生西方極樂世界。
+
+    </div>
+
+  </div>
+
+
+  <div
+    id="status"
+    class="status">
+
+    每次按下「開始誦讀」都會重新取得最新經文。
+
+  </div>
+
+</div>
+
+
+<script>
+
+
+/* =========================
+   全域變數
+========================= */
+
+let scriptureLines = [];
+
+let readingIndex = 0;
+
+let isReading = false;
+
+let voices = [];
+
+let selectedVoice = null;
+
+
+/* =========================
+   載入語音
+========================= */
+
+function loadVoices() {
+
+  voices =
+    window.speechSynthesis.getVoices();
+
+  if (!voices.length) return;
+
+
+  /*
+   優先選擇：
+   1. 中文
+   2. 女性名稱
+   3. 自然語音
+  */
+
+  const femaleWords = [
+    "female",
+    "woman",
+    "女",
+    "雅婷",
+    "婷婷",
+    "小美",
+    "美",
+    "Mei",
+    "Ting"
+  ];
+
+
+  selectedVoice =
+    voices.find(v =>
+      /zh-TW|zh-HK|zh-CN/i
+      .test(v.lang)
+      &&
+      femaleWords.some(word =>
+        v.name.includes(word)
+      )
+    );
+
+
+  if (!selectedVoice) {
+
+    selectedVoice =
+      voices.find(v =>
+        /zh-TW/i.test(v.lang)
+      );
+
+  }
+
+
+  if (!selectedVoice) {
+
+    selectedVoice =
+      voices.find(v =>
+        /zh/i.test(v.lang)
+      );
+
+  }
+
+}
+
+
+speechSynthesis.onvoiceschanged =
+  loadVoices;
+
+loadVoices();
+
+
+/* =========================
+   取得 Google Sheet
+========================= */
+
+function loadContent() {
+
+  google.script.run
+
+    .withSuccessHandler(function(data) {
+
+      scriptureLines = data || [];
+
+
+      if (scriptureLines.length === 0) {
+
+        document.getElementById(
+          "scripture"
+        ).innerText =
+          "目前沒有取得誦讀內容。";
+
+        return;
+
+      }
+
+
+      document.getElementById(
+        "scripture"
+      ).innerText =
+        scriptureLines.join("\n\n");
+
+    })
+
+    .withFailureHandler(function(error) {
+
+      document.getElementById(
+        "scripture"
+      ).innerText =
+        "取得經文失敗：" +
+        error.message;
+
+    })
+
+    .getContent();
+
+}
+
+
+/* =========================
+   網頁開啟時取得一次
+========================= */
+
+loadContent();
+
+
+/* =========================
+   產生迴向文
+========================= */
+
+function buildDedication() {
+
+  const nameInput =
+    document
+      .getElementById("names")
+      .value
+      .trim();
+
+
+  const names =
+    nameInput || "往生者";
+
+
+  const text =
+
+`南無大慈大悲觀世音菩薩，
+南無大慈大悲觀世音菩薩，
+南無大慈大悲觀世音菩薩。
+
+願以此誦唸《般若波羅蜜多心經》之功德，
+專為往生者 ${names} 迴向。
+
+祈願仗此佛力加被，
+業障消除，
+福慧增長，
+離苦得樂，
+蒙佛接引，
+往生西方極樂世界。`;
+
+
+  return text;
+
+}
+
+
+/* =========================
+   更新前台迴向文
+========================= */
+
+function updateDedication() {
+
+  document.getElementById(
+    "dedication"
+  ).innerText =
+    buildDedication();
+
+}
+
+
+/* =========================
+   開始誦讀
+========================= */
+
+function startReading() {
+
+  /*
+   每次開始都重新取得姓名
+   並重新取得 Google Sheet
+  */
+
+  stopReading();
+
+
+  const names =
+    document
+      .getElementById("names")
+      .value
+      .trim();
+
+
+  if (!names) {
+
+    alert("請先輸入往生者姓名。");
+
+    document
+      .getElementById("names")
+      .focus();
+
+    return;
+
+  }
+
+
+  updateDedication();
+
+
+  document.getElementById(
+    "status"
+  ).innerText =
+    "正在重新取得最新誦經內容……";
+
+
+  google.script.run
+
+    .withSuccessHandler(function(data) {
+
+      scriptureLines =
+        data || [];
+
+
+      if (!scriptureLines.length) {
+
+        alert(
+          "Google Sheet 沒有誦經內容。"
+        );
+
+        return;
+
+      }
+
+
+      /*
+       建立完整誦讀內容
+
+       經文
+       ↓
+       迴向
+       ↓
+       經文
+       ↓
+       迴向
+      */
+
+      const dedication =
+        buildDedication();
+
+
+      readingIndex = 0;
+
+      isReading = true;
+
+
+      /*
+       更新背景音樂
+
+       第一次播放需要使用者點擊
+       因此這裡可以正常播放
+      */
+
+      const music =
+        document.getElementById(
+          "bgMusic"
+        );
+
+      music.volume = 0.18;
+
+      music.play().catch(
+        () => {}
+      );
+
+
+      document.getElementById(
+        "status"
+      ).innerText =
+        "誦讀進行中";
+
+
+      readNext(scriptureLines, dedication);
+
+    })
+
+    .withFailureHandler(function(error) {
+
+      alert(
+        "無法取得 Google Sheet：" +
+        error.message
+      );
+
+    })
+
+    .getContent();
+
+}
+
+
+/* =========================
+   下一段
+========================= */
+
+function readNext(
+  scripture,
+  dedication
+) {
+
+  if (!isReading) return;
+
+
+  /*
+   Google Sheet 每一列依序朗讀
+  */
+
+  if (readingIndex < scripture.length) {
+
+    const text =
+      scripture[readingIndex];
+
+
+    document.getElementById(
+      "readingStatus"
+    ).innerText =
+      "正在誦讀：\n" + text;
+
+
+    speak(
+      text,
+      function() {
+
+        readingIndex++;
+
+        readNext(
+          scripture,
+          dedication
+        );
+
+      }
+    );
+
+    return;
+
+  }
+
+
+  /*
+   經文完成
+   開始迴向
+  */
+
+  document.getElementById(
+    "readingStatus"
+  ).innerText =
+    "正在誦讀迴向文";
+
+
+  speak(
+    dedication,
+    function() {
+
+      /*
+       一輪完成後重新開始
+      */
+
+      if (!isReading) return;
+
+
+      readingIndex = 0;
+
+
+      readNext(
+        scripture,
+        dedication
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================
+   語音朗讀
+========================= */
+
+function speak(
+  text,
+  callback
+) {
+
+  if (!isReading) return;
+
+
+  window.speechSynthesis.cancel();
+
+
+  const utterance =
+    new SpeechSynthesisUtterance(
+      text
+    );
+
+
+  /*
+   中文
+  */
+
+  utterance.lang =
+    "zh-TW";
+
+
+  /*
+   語速
+
+   稍慢比較適合誦經
+  */
+
+  utterance.rate =
+    0.72;
+
+
+  /*
+   音調稍微提高
+   讓聲音比較柔和
+  */
+
+  utterance.pitch =
+    1.05;
+
+
+  /*
+   音量
+  */
+
+  utterance.volume =
+    1.0;
+
+
+  if (selectedVoice) {
+
+    utterance.voice =
+      selectedVoice;
+
+  }
+
+
+  utterance.onend =
+    function() {
+
+      if (isReading) {
+
+        setTimeout(
+          callback,
+          350
+        );
+
+      }
+
+    };
+
+
+  utterance.onerror =
+    function() {
+
+      if (isReading) {
+
+        setTimeout(
+          callback,
+          500
+        );
+
+      }
+
+    };
+
+
+  speechSynthesis.speak(
+    utterance
+  );
+
+}
+
+
+/* =========================
+   結束誦讀
+========================= */
+
+function stopReading() {
+
+  isReading = false;
+
+
+  window.speechSynthesis.cancel();
+
+
+  const music =
+    document.getElementById(
+      "bgMusic"
+    );
+
+
+  music.pause();
+
+
+  document.getElementById(
+    "readingStatus"
+  ).innerText =
+    "誦讀已結束";
+
+
+  document.getElementById(
+    "status"
+  ).innerText =
+    "等待下一次開始誦讀";
+
+}
+
+
+/* =========================
+   姓名改變時即時更新
+========================= */
+
+document
+  .getElementById("names")
+  .addEventListener(
+    "input",
+    updateDedication
+  );
+
+
+</script>
+
+</body>
+
+</html>
