@@ -1,73 +1,277 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
+
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#05060a">
-  <title>擬真礦石生成器</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  >
+
+  <title>礦石工坊 · Procedural Gem Studio</title>
+
+  <link rel="stylesheet" href="./style.css">
 </head>
+
 <body>
-  <div id="app">
-    <canvas id="scene"></canvas>
 
-    <header class="topbar">
-      <div>
-        <h1>礦石工坊</h1>
-        <p>Procedural Gem Studio</p>
+  <header class="topbar">
+
+    <div class="brand">
+      <div class="brand-title">礦石工坊</div>
+      <div class="brand-sub">PROCEDURAL GEM STUDIO</div>
+    </div>
+
+    <div class="current-mineral">
+      <span id="mineralIcon">💎</span>
+      <span id="mineralName">紫水晶 AMETHYST</span>
+    </div>
+
+    <div class="top-actions">
+
+      <button id="randomBtn" class="icon-button">
+        <span>⤨</span>
+        <small>隨機</small>
+      </button>
+
+      <button id="lightBtn" class="icon-button">
+        <span>☼</span>
+        <small>光源</small>
+      </button>
+
+      <button id="screenshotBtn" class="icon-button">
+        <span>▣</span>
+        <small>截圖</small>
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <main>
+
+    <section id="viewer">
+
+      <canvas id="scene"></canvas>
+
+      <div id="loading">
+        <div class="loader"></div>
+        正在生成礦石…
       </div>
-      <button id="randomTop" class="icon-btn" aria-label="隨機生成">✦</button>
-    </header>
 
-    <aside class="panel">
+      <div class="hint">
+        <b>拖曳</b> 旋轉視角　
+        <b>滾輪</b> 縮放　
+        <b>雙指</b> 縮放
+      </div>
+
+    </section>
+
+
+    <aside class="control-panel">
+
+      <div class="panel-title">
+        ✦ 礦石參數
+      </div>
+
+
       <label>
         礦石種類
+
         <select id="type">
-          <option value="amethyst">紫水晶</option>
-          <option value="quartz">透明石英</option>
-          <option value="pyrite">黃鐵礦</option>
-          <option value="obsidian">黑曜石</option>
-          <option value="malachite">孔雀石</option>
-          <option value="turquoise">綠松石</option>
-          <option value="opal">蛋白石</option>
-          <option value="moonstone">月光石</option>
-          <option value="ruby">紅寶石</option>
-          <option value="sapphire">藍寶石</option>
-          <option value="random">✨ 神秘隨機礦石</option>
+
+          <option value="amethyst">
+            💜 紫水晶 Amethyst
+          </option>
+
+          <option value="quartz">
+            ◇ 白水晶 Quartz
+          </option>
+
+          <option value="pyrite">
+            🟡 黃鐵礦 Pyrite
+          </option>
+
+          <option value="obsidian">
+            ◆ 黑曜石 Obsidian
+          </option>
+
+          <option value="malachite">
+            🟢 孔雀石 Malachite
+          </option>
+
+          <option value="turquoise">
+            🔵 綠松石 Turquoise
+          </option>
+
+          <option value="opal">
+            🌈 蛋白石 Opal
+          </option>
+
+          <option value="moonstone">
+            ◇ 月光石 Moonstone
+          </option>
+
+          <option value="ruby">
+            🔴 紅寶石 Ruby
+          </option>
+
+          <option value="sapphire">
+            🔷 藍寶石 Sapphire
+          </option>
+
         </select>
       </label>
 
-      <label>
-        晶體數量
-        <input id="crystals" type="range" min="0" max="12" value="5">
-      </label>
 
-      <label>
-        光澤
-        <input id="gloss" type="range" min="0" max="100" value="82">
-      </label>
+      <div class="slider-row">
 
-      <label>
-        透明度
-        <input id="transparency" type="range" min="0" max="100" value="28">
-      </label>
+        <div>
+          <span>晶體數量</span>
+          <strong id="crystalValue">7</strong>
+        </div>
 
-      <label>
-        稀有度
-        <input id="rarity" type="range" min="0" max="100" value="60">
-      </label>
+        <input
+          id="crystals"
+          type="range"
+          min="3"
+          max="14"
+          value="7"
+        >
 
-      <div class="buttons">
-        <button id="generate" class="primary">生成礦石</button>
-        <button id="download">下載 PNG</button>
       </div>
 
-      <p class="hint">拖曳旋轉 · 雙指縮放 · 點擊 ✦ 隨機生成</p>
+
+      <div class="slider-row">
+
+        <div>
+          <span>光澤</span>
+          <strong id="glossValue">0.85</strong>
+        </div>
+
+        <input
+          id="gloss"
+          type="range"
+          min="0"
+          max="100"
+          value="85"
+        >
+
+      </div>
+
+
+      <div class="slider-row">
+
+        <div>
+          <span>透明度</span>
+          <strong id="transValue">0.62</strong>
+        </div>
+
+        <input
+          id="transparency"
+          type="range"
+          min="0"
+          max="100"
+          value="62"
+        >
+
+      </div>
+
+
+      <div class="slider-row">
+
+        <div>
+          <span>稀有度</span>
+          <strong id="rarityValue">0.75</strong>
+        </div>
+
+        <input
+          id="rarity"
+          type="range"
+          min="0"
+          max="100"
+          value="75"
+        >
+
+      </div>
+
+
+      <div class="section-label">
+        晶體形態
+      </div>
+
+      <div class="shape-buttons">
+
+        <button class="shape active" data-shape="cluster">
+          簇狀
+        </button>
+
+        <button class="shape" data-shape="single">
+          單晶
+        </button>
+
+        <button class="shape" data-shape="mass">
+          塊狀
+        </button>
+
+      </div>
+
+
+      <div class="section-label">
+        背景
+      </div>
+
+      <div class="background-buttons">
+
+        <button
+          class="bg active"
+          data-bg="black"
+        ></button>
+
+        <button
+          class="bg"
+          data-bg="purple"
+        ></button>
+
+        <button
+          class="bg"
+          data-bg="blue"
+        ></button>
+
+        <button
+          class="bg"
+          data-bg="white"
+        ></button>
+
+      </div>
+
+
+      <button
+        id="generateBtn"
+        class="generate"
+      >
+        ✦ 生成新礦石
+      </button>
+
+
+      <button
+        id="downloadBtn"
+        class="download"
+      >
+        ↓　下載 PNG
+      </button>
+
+
+      <div class="mobile-help">
+        手機：拖曳旋轉 · 雙指縮放
+      </div>
+
     </aside>
 
-    <div id="badge">AMETHYST</div>
-    <div id="loading">生成中…</div>
-  </div>
+  </main>
+
 
   <script type="importmap">
   {
@@ -77,6 +281,8 @@
     }
   }
   </script>
-  <script type="module" src="app.js"></script>
+
+  <script type="module" src="./app.js"></script>
+
 </body>
 </html>
