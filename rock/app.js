@@ -1,6 +1,16 @@
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import {
+  OrbitControls
+} from 'three/addons/controls/OrbitControls.js';
+
+import {
+  RoomEnvironment
+} from 'three/addons/environments/RoomEnvironment.js';
+
+
+/* =========================================================
+   基本設定
+========================================================= */
 
 const canvas = document.querySelector('#scene');
 const loading = document.querySelector('#loading');
@@ -12,448 +22,745 @@ const glossSlider = document.querySelector('#gloss');
 const transparencySlider = document.querySelector('#transparency');
 const raritySlider = document.querySelector('#rarity');
 
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x03040a);
 
-const camera = new THREE.PerspectiveCamera(
-  42,
-  innerWidth / innerHeight,
-  0.05,
-  100
+
+/* =========================================================
+   THREE.JS
+========================================================= */
+
+const scene = new THREE.Scene();
+
+scene.background =
+  new THREE.Color(0x03040a);
+
+
+const camera =
+  new THREE.PerspectiveCamera(
+    38,
+    window.innerWidth / window.innerHeight,
+    0.05,
+    100
+  );
+
+camera.position.set(
+  0,
+  0.35,
+  6.8
 );
 
-camera.position.set(0, 0.8, 6.5);
 
-const renderer = new THREE.WebGLRenderer({
-  canvas,
-  antialias: true,
-  preserveDrawingBuffer: true
-});
+const renderer =
+  new THREE.WebGLRenderer({
+    canvas,
+    antialias: true,
+    preserveDrawingBuffer: true,
+    powerPreference: 'high-performance'
+  });
 
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.setSize(innerWidth, innerHeight);
 
-renderer.outputColorSpace = THREE.SRGBColorSpace;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.15;
+renderer.setSize(
+  window.innerWidth,
+  window.innerHeight
+);
 
-const pmrem = new THREE.PMREMGenerator(renderer);
+
+renderer.setPixelRatio(
+  Math.min(
+    window.devicePixelRatio,
+    1.7
+  )
+);
+
+
+renderer.outputColorSpace =
+  THREE.SRGBColorSpace;
+
+
+renderer.toneMapping =
+  THREE.ACESFilmicToneMapping;
+
+
+renderer.toneMappingExposure =
+  1.18;
+
+
+
+/* =========================================================
+   HDR 環境反射
+========================================================= */
+
+const pmrem =
+  new THREE.PMREMGenerator(
+    renderer
+  );
+
 
 scene.environment =
-  pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
+  pmrem.fromScene(
+    new RoomEnvironment(renderer),
+    0.035
+  ).texture;
+
 
 
 /* =========================================================
-   CAMERA / TOUCH
+   相機控制
 ========================================================= */
 
-const controls = new OrbitControls(camera, canvas);
+const controls =
+  new OrbitControls(
+    camera,
+    canvas
+  );
+
 
 controls.enableDamping = true;
+
 controls.dampingFactor = 0.055;
 
-controls.minDistance = 3;
-controls.maxDistance = 10;
+controls.minDistance = 3.2;
 
-controls.target.set(0, 0, 0);
+controls.maxDistance = 9;
 
-
-/* =========================================================
-   MINERAL GROUP
-========================================================= */
-
-const mineralGroup = new THREE.Group();
-
-scene.add(mineralGroup);
-
-
-/* =========================================================
-   LIGHTING
-========================================================= */
-
-const keyLight = new THREE.DirectionalLight(
-  0xffffff,
-  6
+controls.target.set(
+  0,
+  0.05,
+  0
 );
 
-keyLight.position.set(4, 6, 5);
+
+
+/* =========================================================
+   礦石總容器
+========================================================= */
+
+const mineral =
+  new THREE.Group();
+
+scene.add(mineral);
+
+
+
+/* =========================================================
+   展示台
+========================================================= */
+
+const stage =
+  new THREE.Mesh(
+
+    new THREE.CylinderGeometry(
+      3.65,
+      3.9,
+      0.32,
+      96
+    ),
+
+    new THREE.MeshStandardMaterial({
+
+      color: 0x15131e,
+
+      roughness: 0.32,
+
+      metalness: 0.18
+
+    })
+
+  );
+
+
+stage.position.y =
+  -1.82;
+
+
+mineral.add(stage);
+
+
+
+const stageTop =
+  new THREE.Mesh(
+
+    new THREE.CylinderGeometry(
+      3.55,
+      3.55,
+      0.035,
+      96
+    ),
+
+    new THREE.MeshStandardMaterial({
+
+      color: 0x292033,
+
+      roughness: 0.2,
+
+      metalness: 0.12
+
+    })
+
+  );
+
+
+stageTop.position.y =
+  -1.64;
+
+
+mineral.add(stageTop);
+
+
+
+/* =========================================================
+   光源
+========================================================= */
+
+const keyLight =
+  new THREE.DirectionalLight(
+    0xffffff,
+    6.5
+  );
+
+keyLight.position.set(
+  3.8,
+  5.5,
+  4.5
+);
 
 scene.add(keyLight);
 
 
-const fillLight = new THREE.PointLight(
-  0x7ca6ff,
-  25,
-  14
+
+const purpleLight =
+  new THREE.PointLight(
+    0x806cff,
+    20,
+    12
+  );
+
+purpleLight.position.set(
+  -4,
+  1.8,
+  3
 );
 
-fillLight.position.set(-4, 2, 3);
-
-scene.add(fillLight);
+scene.add(purpleLight);
 
 
-const pinkLight = new THREE.PointLight(
-  0xff4fd8,
-  22,
-  12
+
+const pinkLight =
+  new THREE.PointLight(
+    0xff6ed8,
+    18,
+    11
+  );
+
+pinkLight.position.set(
+  4,
+  1,
+  -4
 );
-
-pinkLight.position.set(4, -1, -4);
 
 scene.add(pinkLight);
 
 
-const topLight = new THREE.PointLight(
-  0xffffff,
-  16,
-  10
-);
 
-topLight.position.set(0, 5, 1);
+const topLight =
+  new THREE.PointLight(
+    0xffffff,
+    12,
+    9
+  );
+
+topLight.position.set(
+  0,
+  5,
+  1
+);
 
 scene.add(topLight);
 
 
-/* =========================================================
-   DISPLAY FLOOR
-========================================================= */
-
-const floorGeometry = new THREE.CircleGeometry(7, 96);
-
-const floorMaterial = new THREE.MeshStandardMaterial({
-  color: 0x080a11,
-  roughness: 0.65,
-  metalness: 0.15
-});
-
-const floor = new THREE.Mesh(
-  floorGeometry,
-  floorMaterial
-);
-
-floor.rotation.x = -Math.PI / 2;
-
-floor.position.y = -1.9;
-
-scene.add(floor);
-
 
 /* =========================================================
-   MINERAL DATABASE
+   礦石資料
 ========================================================= */
 
 const MINERALS = {
 
   amethyst: {
+
     name: 'AMETHYST',
-    color: 0x7137aa,
-    highlight: 0xd9a8ff,
-    roughness: 0.12,
-    metalness: 0.02,
-    transmission: 0.28,
+
+    color: 0x6d2ea8,
+
+    highlight: 0xe0b8ff,
+
+    roughness: 0.085,
+
+    metalness: 0,
+
+    transmission: 0.48,
+
     ior: 1.54,
-    crystal: true
+
+    crystals: true
+
   },
+
 
   quartz: {
+
     name: 'QUARTZ',
-    color: 0xc9e9ff,
+
+    color: 0xc9eaff,
+
     highlight: 0xffffff,
-    roughness: 0.06,
+
+    roughness: 0.045,
+
     metalness: 0,
-    transmission: 0.75,
+
+    transmission: 0.78,
+
     ior: 1.46,
-    crystal: true
+
+    crystals: true
+
   },
+
 
   pyrite: {
+
     name: 'PYRITE',
-    color: 0xa87918,
-    highlight: 0xffe39a,
-    roughness: 0.13,
-    metalness: 0.92,
+
+    color: 0xa87815,
+
+    highlight: 0xffe59a,
+
+    roughness: 0.11,
+
+    metalness: 0.9,
+
     transmission: 0,
+
     ior: 1.5,
-    crystal: true
+
+    crystals: true
+
   },
+
 
   obsidian: {
+
     name: 'OBSIDIAN',
-    color: 0x090d16,
-    highlight: 0x6f8dca,
-    roughness: 0.045,
-    metalness: 0.1,
+
+    color: 0x0c111b,
+
+    highlight: 0x6c86c5,
+
+    roughness: 0.035,
+
+    metalness: 0.12,
+
     transmission: 0.18,
+
     ior: 1.48,
-    crystal: false
+
+    crystals: false
+
   },
+
 
   malachite: {
+
     name: 'MALACHITE',
-    color: 0x08704b,
-    highlight: 0x73e4aa,
-    roughness: 0.23,
-    metalness: 0.05,
-    transmission: 0.05,
+
+    color: 0x0b704b,
+
+    highlight: 0x77e8b1,
+
+    roughness: 0.2,
+
+    metalness: 0.03,
+
+    transmission: 0.04,
+
     ior: 1.6,
-    crystal: false
+
+    crystals: false
+
   },
+
 
   turquoise: {
+
     name: 'TURQUOISE',
-    color: 0x16aaa3,
+
+    color: 0x18aaa2,
+
     highlight: 0xa8fff2,
-    roughness: 0.2,
+
+    roughness: 0.18,
+
     metalness: 0.02,
-    transmission: 0.08,
+
+    transmission: 0.06,
+
     ior: 1.61,
-    crystal: false
+
+    crystals: false
+
   },
+
 
   opal: {
+
     name: 'OPAL',
-    color: 0xdce7ec,
+
+    color: 0xd9e5e9,
+
     highlight: 0xffffff,
-    roughness: 0.07,
+
+    roughness: 0.055,
+
     metalness: 0,
-    transmission: 0.6,
+
+    transmission: 0.62,
+
     ior: 1.45,
-    crystal: false,
+
+    crystals: false,
+
     opal: true
+
   },
+
 
   moonstone: {
+
     name: 'MOONSTONE',
-    color: 0x9cb9db,
-    highlight: 0xe4efff,
-    roughness: 0.08,
+
+    color: 0x9cb8db,
+
+    highlight: 0xe3efff,
+
+    roughness: 0.07,
+
     metalness: 0,
-    transmission: 0.46,
+
+    transmission: 0.5,
+
     ior: 1.52,
-    crystal: false
+
+    crystals: false
+
   },
+
 
   ruby: {
+
     name: 'RUBY',
-    color: 0xa90720,
-    highlight: 0xff8798,
-    roughness: 0.06,
+
+    color: 0xa50720,
+
+    highlight: 0xff8a9b,
+
+    roughness: 0.045,
+
     metalness: 0,
-    transmission: 0.45,
+
+    transmission: 0.52,
+
     ior: 1.77,
-    crystal: true
+
+    crystals: true
+
   },
 
+
   sapphire: {
+
     name: 'SAPPHIRE',
-    color: 0x1049a9,
-    highlight: 0x8dbaff,
-    roughness: 0.055,
+
+    color: 0x1049aa,
+
+    highlight: 0x8ebcff,
+
+    roughness: 0.04,
+
     metalness: 0,
-    transmission: 0.42,
+
+    transmission: 0.5,
+
     ior: 1.77,
-    crystal: true
+
+    crystals: true
+
   }
 
 };
 
 
+
 /* =========================================================
-   RANDOM
+   工具
 ========================================================= */
 
 function random(min, max) {
-  return min + Math.random() * (max - min);
+
+  return min +
+    Math.random() *
+    (max - min);
+
 }
 
 
-function randomChoice(array) {
+function choose(array) {
+
   return array[
-    Math.floor(Math.random() * array.length)
+    Math.floor(
+      Math.random() *
+      array.length
+    )
   ];
+
 }
 
-
-function randomMineral() {
-
-  const keys = Object.keys(MINERALS);
-
-  return randomChoice(keys);
-}
 
 
 /* =========================================================
-   DISPOSE
+   清除舊礦石
 ========================================================= */
 
 function disposeObject(object) {
 
-  object.traverse(child => {
+  object.traverse(
+    child => {
 
-    if (child.geometry) {
-      child.geometry.dispose();
-    }
+      if (child.geometry) {
 
-    if (child.material) {
+        child.geometry.dispose();
 
-      if (Array.isArray(child.material)) {
+      }
 
-        child.material.forEach(material => {
-          material.dispose();
-        });
 
-      } else {
+      if (child.material) {
 
-        child.material.dispose();
+        if (
+          Array.isArray(
+            child.material
+          )
+        ) {
+
+          child.material.forEach(
+            material =>
+              material.dispose()
+          );
+
+        } else {
+
+          child.material.dispose();
+
+        }
 
       }
 
     }
+  );
+
+}
+
+
+function clearMineral() {
+
+  /*
+   * 前兩個是展示台。
+   */
+
+  while (
+    mineral.children.length > 2
+  ) {
+
+    const object =
+      mineral.children.pop();
+
+    disposeObject(object);
+
+  }
+
+}
+
+
+
+/* =========================================================
+   PBR 礦石材質
+========================================================= */
+
+function createRockMaterial(
+  config,
+  rarity
+) {
+
+  const gloss =
+    Number(
+      glossSlider.value
+    ) / 100;
+
+
+  const transparency =
+    Number(
+      transparencySlider.value
+    ) / 100;
+
+
+  return new THREE.MeshPhysicalMaterial({
+
+    color:
+      config.color,
+
+
+    roughness:
+      Math.max(
+        0.025,
+
+        config.roughness +
+        (1 - gloss) * 0.16
+      ),
+
+
+    metalness:
+      config.metalness,
+
+
+    clearcoat:
+      0.65 +
+      gloss * 0.35,
+
+
+    clearcoatRoughness:
+      0.025 +
+      (1 - gloss) * 0.08,
+
+
+    transmission:
+      config.transmission *
+      (
+        0.45 +
+        transparency * 0.55
+      ),
+
+
+    thickness:
+      1.2 +
+      rarity * 2.5,
+
+
+    ior:
+      config.ior,
+
+
+    envMapIntensity:
+      1.5 +
+      gloss * 1.8,
+
+
+    iridescence:
+      config.opal
+        ? 0.95
+        : 0,
+
+
+    iridescenceIOR:
+      1.33,
+
+
+    sheen:
+      config.opal
+        ? 0.9
+        : 0.05
 
   });
 
 }
 
 
-/* =========================================================
-   CLEAR OLD MINERAL
-========================================================= */
-
-function clearMineral() {
-
-  while (mineralGroup.children.length > 0) {
-
-    const child = mineralGroup.children.pop();
-
-    disposeObject(child);
-
-  }
-
-}
-
 
 /* =========================================================
-   ROCK MATERIAL
+   礦石母岩
 ========================================================= */
 
-function createRockMaterial(config, rarity) {
+function createMatrix(
+  config,
+  rarity
+) {
 
-  const gloss =
-    Number(glossSlider.value) / 100;
-
-  const transparency =
-    Number(transparencySlider.value) / 100;
-
-  const material =
-    new THREE.MeshPhysicalMaterial({
-
-      color: config.color,
-
-      roughness:
-        Math.max(
-          0.025,
-          config.roughness +
-          (1 - gloss) * 0.35
-        ),
-
-      metalness:
-        config.metalness,
-
-      clearcoat:
-        0.55 + gloss * 0.45,
-
-      clearcoatRoughness:
-        0.035 + (1 - gloss) * 0.1,
-
-      transmission:
-        config.transmission *
-        (0.45 + transparency * 0.55),
-
-      thickness:
-        0.8 + rarity * 2.8,
-
-      ior:
-        config.ior,
-
-      envMapIntensity:
-        1.5 + gloss * 2.0,
-
-      iridescence:
-        config.opal
-          ? 0.85 + rarity * 0.15
-          : 0,
-
-      iridescenceIOR:
-        1.33,
-
-      sheen:
-        config.opal ? 0.8 : 0.05
-
-    });
-
-  return material;
-
-}
-
-
-/* =========================================================
-   PROCEDURAL ROCK
-========================================================= */
-
-function createRock(config, rarity) {
+  /*
+   * 使用 Dodecahedron，
+   * 不再使用大量散亂三角形。
+   */
 
   const geometry =
-    new THREE.IcosahedronGeometry(
-      1.7,
-      5
+    new THREE.DodecahedronGeometry(
+      1.55,
+      3
     );
 
-  const positions =
+
+  const position =
     geometry.attributes.position;
 
-  const vertex = new THREE.Vector3();
+
+  const vertex =
+    new THREE.Vector3();
+
 
   const seed =
     Math.random() * 10000;
 
+
   for (
     let i = 0;
-    i < positions.count;
+    i < position.count;
     i++
   ) {
 
     vertex.fromBufferAttribute(
-      positions,
+      position,
       i
     );
 
+
     const noise =
-      Math.sin(
-        vertex.x * 4.8 + seed
-      ) * 0.09 +
 
       Math.sin(
-        vertex.y * 6.2 - seed
-      ) * 0.08 +
+        vertex.x * 3.7 +
+        seed
+      ) * 0.075 +
 
       Math.sin(
-        vertex.z * 5.7 + seed * 0.7
-      ) * 0.08;
+        vertex.y * 5.1 -
+        seed
+      ) * 0.055 +
 
-    const scale =
+      Math.sin(
+        vertex.z * 4.2 +
+        seed * 0.4
+      ) * 0.065;
+
+
+    vertex.multiplyScalar(
+
       1 +
       noise +
-      random(-0.045, 0.045);
+      random(
+        -0.035,
+        0.035
+      )
 
-    vertex.multiplyScalar(scale);
+    );
 
-    vertex.x *= random(0.92, 1.08);
 
-    vertex.y *= random(0.82, 1.12);
+    vertex.y *= 0.78;
 
-    vertex.z *= random(0.9, 1.06);
 
-    positions.setXYZ(
+    position.setXYZ(
       i,
       vertex.x,
       vertex.y,
@@ -462,11 +769,15 @@ function createRock(config, rarity) {
 
   }
 
-  positions.needsUpdate = true;
+
+  position.needsUpdate =
+    true;
+
 
   geometry.computeVertexNormals();
 
-  const mesh =
+
+  const rock =
     new THREE.Mesh(
       geometry,
       createRockMaterial(
@@ -475,21 +786,264 @@ function createRock(config, rarity) {
       )
     );
 
-  mesh.rotation.set(
-    random(-0.25, 0.25),
-    random(0, Math.PI * 2),
-    random(-0.2, 0.2)
+
+  rock.position.y =
+    -0.48;
+
+
+  mineral.add(rock);
+
+
+
+  /*
+   * 黑色母岩底座。
+   */
+
+  const host =
+    new THREE.Mesh(
+
+      new THREE.DodecahedronGeometry(
+        1.55,
+        2
+      ),
+
+      new THREE.MeshStandardMaterial({
+
+        color: 0x18131c,
+
+        roughness: 0.65,
+
+        metalness: 0.12
+
+      })
+
+    );
+
+
+  host.scale.set(
+    1.12,
+    0.48,
+    0.92
   );
 
-  mineralGroup.add(mesh);
 
-  return mesh;
+  host.position.set(
+    0,
+    -1.03,
+    0
+  );
+
+
+  mineral.add(host);
 
 }
 
 
+
 /* =========================================================
-   CRYSTAL
+   真正的六角晶體
+========================================================= */
+
+function createCrystalGeometry(
+  radius,
+  height,
+  sides = 6
+) {
+
+  const bottomY = 0;
+
+  const shoulderY =
+    height * 0.72;
+
+  const tipY =
+    height;
+
+
+  const vertices = [];
+
+  const indices = [];
+
+
+  /*
+   * 底部六角環。
+   */
+
+  for (
+    let i = 0;
+    i < sides;
+    i++
+  ) {
+
+    const angle =
+      i / sides *
+      Math.PI * 2 +
+      Math.PI / 6;
+
+
+    vertices.push(
+
+      Math.cos(angle) *
+        radius,
+
+      bottomY,
+
+      Math.sin(angle) *
+        radius
+
+    );
+
+  }
+
+
+  /*
+   * 上方六角環。
+   */
+
+  for (
+    let i = 0;
+    i < sides;
+    i++
+  ) {
+
+    const angle =
+      i / sides *
+      Math.PI * 2 +
+      Math.PI / 6;
+
+
+    vertices.push(
+
+      Math.cos(angle) *
+        radius,
+
+      shoulderY,
+
+      Math.sin(angle) *
+        radius
+
+    );
+
+  }
+
+
+  /*
+   * 尖端。
+   */
+
+  const tipIndex =
+    sides * 2;
+
+
+  vertices.push(
+    0,
+    tipY,
+    0
+  );
+
+
+  /*
+   * 六角柱側面。
+   */
+
+  for (
+    let i = 0;
+    i < sides;
+    i++
+  ) {
+
+    const next =
+      (i + 1) % sides;
+
+
+    indices.push(
+
+      i,
+      next,
+      sides + next,
+
+      i,
+      sides + next,
+      sides + i
+
+    );
+
+  }
+
+
+  /*
+   * 尖頂。
+   */
+
+  for (
+    let i = 0;
+    i < sides;
+    i++
+  ) {
+
+    const next =
+      (i + 1) % sides;
+
+
+    indices.push(
+
+      sides + i,
+      sides + next,
+      tipIndex
+
+    );
+
+  }
+
+
+  /*
+   * 底面。
+   */
+
+  for (
+    let i = 1;
+    i < sides - 1;
+    i++
+  ) {
+
+    indices.push(
+      0,
+      i + 1,
+      i
+    );
+
+  }
+
+
+  const geometry =
+    new THREE.BufferGeometry();
+
+
+  geometry.setAttribute(
+
+    'position',
+
+    new THREE.Float32BufferAttribute(
+      vertices,
+      3
+    )
+
+  );
+
+
+  geometry.setIndex(indices);
+
+
+  geometry.computeVertexNormals();
+
+
+  return geometry;
+
+}
+
+
+
+/* =========================================================
+   生成晶體
 ========================================================= */
 
 function createCrystal(
@@ -499,73 +1053,113 @@ function createCrystal(
   rarity
 ) {
 
+  /*
+   * 前幾顆是主晶體，
+   * 後面才是小晶體。
+   */
+
+  const isMain =
+    index < Math.ceil(
+      total * 0.28
+    );
+
+
   const height =
-    random(0.65, 1.55) *
-    (0.8 + rarity * 0.75);
+    isMain
+
+      ? random(
+          1.7,
+          2.5
+        )
+
+      : random(
+          0.65,
+          1.35
+        );
+
 
   const radius =
-    random(0.14, 0.32);
+    isMain
 
-  let sides;
+      ? random(
+          0.34,
+          0.52
+        )
 
-  if (config.name === 'PYRITE') {
+      : random(
+          0.17,
+          0.30
+        );
 
-    sides = 4;
 
-  } else {
+  const sides =
+    config.name === 'PYRITE'
+      ? 4
+      : 6;
 
-    sides =
-      randomChoice([
-        5,
-        6,
-        6,
-        8
-      ]);
-
-  }
 
   const geometry =
-    new THREE.CylinderGeometry(
+    createCrystalGeometry(
       radius,
-      radius * 0.94,
       height,
-      sides,
-      1,
-      false
+      sides
     );
+
 
   const material =
     new THREE.MeshPhysicalMaterial({
 
-      color: config.highlight,
+      color:
+        config.color,
+
 
       roughness:
-        config.name === 'PYRITE'
-          ? 0.12
-          : 0.055,
+        Math.max(
+          0.025,
+          config.roughness
+        ),
+
 
       metalness:
-        config.name === 'PYRITE'
-          ? 0.95
-          : 0.01,
+        config.metalness,
 
-      clearcoat: 0.95,
 
-      clearcoatRoughness: 0.035,
+      clearcoat:
+        0.92,
+
+
+      clearcoatRoughness:
+        0.025,
+
 
       transmission:
-        config.transmission * 0.7,
+        config.transmission *
+        0.8,
 
-      thickness: 1.7,
 
-      ior: config.ior,
+      thickness:
+        1.8,
 
-      envMapIntensity: 2.5,
+
+      ior:
+        config.ior,
+
+
+      envMapIntensity:
+        2.6,
+
 
       iridescence:
-        config.opal ? 1 : 0
+        config.opal
+          ? 0.95
+          : 0,
+
+
+      iridescenceIOR:
+        1.33
 
     });
+
 
   const crystal =
     new THREE.Mesh(
@@ -573,63 +1167,205 @@ function createCrystal(
       material
     );
 
-  const angle =
-    index / Math.max(1, total) *
-    Math.PI * 2 +
-    random(-0.35, 0.35);
 
-  const distance =
-    random(0.2, 1.1);
+  /*
+   * 主晶體在中央。
+   */
 
-  crystal.position.set(
-    Math.cos(angle) * distance,
-    random(-0.35, 0.45),
-    Math.sin(angle) * distance
-  );
+  if (
+    index === 0
+  ) {
 
-  crystal.rotation.set(
-    random(-0.25, 0.25),
-    angle + random(-0.3, 0.3),
-    random(-0.25, 0.25)
-  );
-
-  mineralGroup.add(crystal);
-
-
-  /* ---- Crystal termination ---- */
-
-  const capGeometry =
-    new THREE.ConeGeometry(
-      radius * 1.03,
-      radius * 0.55,
-      sides
+    crystal.position.set(
+      0,
+      -0.35,
+      0
     );
 
-  const cap =
-    new THREE.Mesh(
-      capGeometry,
-      material
+    crystal.rotation.y =
+      random(
+        0,
+        Math.PI * 2
+      );
+
+  }
+
+  /*
+   * 其他高晶體圍繞中央。
+   */
+
+  else if (
+    isMain
+  ) {
+
+    const angle =
+      (index - 1) /
+      Math.max(
+        1,
+        Math.ceil(total * 0.28) - 1
+      ) *
+      Math.PI *
+      2;
+
+
+    const distance =
+      random(
+        0.38,
+        0.72
+      );
+
+
+    crystal.position.set(
+
+      Math.cos(angle) *
+        distance,
+
+      random(
+        -0.28,
+        0.02
+      ),
+
+      Math.sin(angle) *
+        distance
+
     );
 
-  cap.position.copy(
-    crystal.position
-  );
 
-  cap.position.y +=
-    height / 2 +
-    radius * 0.23;
+    crystal.rotation.y =
+      angle +
+      Math.PI / 2 +
+      random(
+        -0.12,
+        0.12
+      );
 
-  cap.rotation.copy(
-    crystal.rotation
-  );
+  }
 
-  mineralGroup.add(cap);
+  /*
+   * 外圍小晶體。
+   */
+
+  else {
+
+    const angle =
+      index /
+      total *
+      Math.PI *
+      2 +
+      random(
+        -0.22,
+        0.22
+      );
+
+
+    const distance =
+      random(
+        0.48,
+        1.18
+      );
+
+
+    crystal.position.set(
+
+      Math.cos(angle) *
+        distance,
+
+      random(
+        -0.55,
+        0.03
+      ),
+
+      Math.sin(angle) *
+        distance
+
+    );
+
+
+    crystal.rotation.y =
+      angle +
+      Math.PI / 2 +
+      random(
+        -0.25,
+        0.25
+      );
+
+  }
+
+
+  crystal.rotation.x =
+    random(
+      -0.12,
+      0.12
+    );
+
+
+  crystal.rotation.z =
+    isMain
+
+      ? random(
+          -0.06,
+          0.06
+        )
+
+      : random(
+          -0.2,
+          0.2
+        );
+
+
+  mineral.add(crystal);
+
+
+  /*
+   * 小晶體與母岩接觸。
+   */
+
+  if (
+    !isMain &&
+    Math.random() < 0.7
+  ) {
+
+    const smallGeometry =
+      createCrystalGeometry(
+        radius * 0.65,
+        height * 0.5,
+        6
+      );
+
+
+    const smallCrystal =
+      new THREE.Mesh(
+        smallGeometry,
+        material
+      );
+
+
+    smallCrystal.position.copy(
+      crystal.position
+    );
+
+
+    smallCrystal.position.y -=
+      0.32;
+
+
+    smallCrystal.rotation.copy(
+      crystal.rotation
+    );
+
+
+    mineral.add(
+      smallCrystal
+    );
+
+  }
 
 }
 
 
+
 /* =========================================================
-   INTERNAL INCLUSIONS
+   礦石內部包裹體
 ========================================================= */
 
 function createInclusions(
@@ -639,27 +1375,29 @@ function createInclusions(
 
   const count =
     Math.floor(
-      5 + rarity * 18
+      12 +
+      rarity * 35
     );
 
+
   const material =
-    new THREE.MeshPhysicalMaterial({
+    new THREE.MeshBasicMaterial({
 
-      color: config.highlight,
+      color:
+        config.highlight,
 
-      transparent: true,
+      transparent:
+        true,
 
       opacity:
-        0.08 + rarity * 0.22,
+        0.12 +
+        rarity * 0.18,
 
-      roughness: 0.2,
+      blending:
+        THREE.AdditiveBlending,
 
-      transmission: 0.25,
-
-      emissive: config.highlight,
-
-      emissiveIntensity:
-        0.03 + rarity * 0.08
+      depthWrite:
+        false
 
     });
 
@@ -670,41 +1408,64 @@ function createInclusions(
     i++
   ) {
 
-    const size =
-      random(0.012, 0.045);
-
-    const geometry =
-      new THREE.SphereGeometry(
-        size,
-        7,
-        5
-      );
-
     const particle =
       new THREE.Mesh(
-        geometry,
+
+        new THREE.SphereGeometry(
+          random(
+            0.012,
+            0.035
+          ),
+          6,
+          4
+        ),
+
         material
+
       );
 
+
     particle.position.set(
-      random(-1.25, 1.25),
-      random(-1.25, 1.25),
-      random(-1.25, 1.25)
+
+      random(
+        -1.05,
+        1.05
+      ),
+
+      random(
+        -0.85,
+        1.35
+      ),
+
+      random(
+        -0.8,
+        0.8
+      )
+
     );
 
+
+    /*
+     * 把太外面的粒子拉回礦石內。
+     */
+
     if (
-      particle.position.length() >
-      1.4
+      particle.position.x *
+        particle.position.x +
+
+      particle.position.z *
+        particle.position.z >
+      1.1
     ) {
 
-      particle.position
-        .setLength(
-          random(0.45, 1.3)
-        );
+      particle.position.multiplyScalar(
+        0.72
+      );
 
     }
 
-    mineralGroup.add(
+
+    mineral.add(
       particle
     );
 
@@ -713,99 +1474,9 @@ function createInclusions(
 }
 
 
-/* =========================================================
-   MINERAL CRACKS
-========================================================= */
-
-function createCracks(
-  config,
-  rarity
-) {
-
-  if (rarity < 0.35) {
-    return;
-  }
-
-  const material =
-    new THREE.LineBasicMaterial({
-
-      color: config.highlight,
-
-      transparent: true,
-
-      opacity:
-        0.12 + rarity * 0.2,
-
-      blending:
-        THREE.AdditiveBlending
-
-    });
-
-
-  const number =
-    Math.floor(
-      2 + rarity * 6
-    );
-
-
-  for (
-    let i = 0;
-    i < number;
-    i++
-  ) {
-
-    const points = [];
-
-    let x =
-      random(-0.7, 0.7);
-
-    let y =
-      random(-0.9, 0.9);
-
-    let z =
-      random(-0.7, 0.7);
-
-
-    for (
-      let j = 0;
-      j < 8;
-      j++
-    ) {
-
-      points.push(
-        new THREE.Vector3(
-          x,
-          y,
-          z
-        )
-      );
-
-      x += random(-0.13, 0.13);
-      y += random(-0.16, 0.16);
-      z += random(-0.13, 0.13);
-
-    }
-
-
-    const geometry =
-      new THREE.BufferGeometry()
-        .setFromPoints(points);
-
-    const line =
-      new THREE.Line(
-        geometry,
-        material
-      );
-
-    mineralGroup.add(line);
-
-  }
-
-}
-
 
 /* =========================================================
-   OPAL / PYRITE SPARKLES
+   蛋白石 / 黃鐵礦閃光
 ========================================================= */
 
 function createSparkles(
@@ -814,9 +1485,13 @@ function createSparkles(
 ) {
 
   if (
-    config.name !== 'OPAL' &&
+
+    !config.opal &&
+
     config.name !== 'PYRITE' &&
-    rarity < 0.55
+
+    rarity < 0.7
+
   ) {
 
     return;
@@ -827,7 +1502,10 @@ function createSparkles(
   const positions = [];
 
   const count =
-    70 + Math.floor(rarity * 130);
+    70 +
+    Math.floor(
+      rarity * 100
+    );
 
 
   for (
@@ -837,9 +1515,22 @@ function createSparkles(
   ) {
 
     positions.push(
-      random(-1.45, 1.45),
-      random(-1.4, 1.4),
-      random(-1.45, 1.45)
+
+      random(
+        -1.3,
+        1.3
+      ),
+
+      random(
+        -0.9,
+        1.45
+      ),
+
+      random(
+        -1,
+        1
+      )
+
     );
 
   }
@@ -848,96 +1539,117 @@ function createSparkles(
   const geometry =
     new THREE.BufferGeometry();
 
+
   geometry.setAttribute(
+
     'position',
+
     new THREE.Float32BufferAttribute(
       positions,
       3
     )
+
   );
 
 
-  const material =
-    new THREE.PointsMaterial({
-
-      color: config.highlight,
-
-      size:
-        0.012 +
-        rarity * 0.026,
-
-      transparent: true,
-
-      opacity:
-        0.3 +
-        rarity * 0.55,
-
-      blending:
-        THREE.AdditiveBlending,
-
-      depthWrite: false
-
-    });
-
-
-  const particles =
+  const points =
     new THREE.Points(
+
       geometry,
-      material
+
+      new THREE.PointsMaterial({
+
+        color:
+          config.highlight,
+
+        size:
+          0.014 +
+          rarity * 0.02,
+
+        transparent:
+          true,
+
+        opacity:
+          0.3 +
+          rarity * 0.5,
+
+        blending:
+          THREE.AdditiveBlending,
+
+        depthWrite:
+          false
+
+      })
+
     );
 
-  mineralGroup.add(
-    particles
+
+  mineral.add(
+    points
   );
 
 }
 
 
+
 /* =========================================================
-   GLOW HALO
+   光暈
 ========================================================= */
 
-function createGlow(config, rarity) {
-
-  const geometry =
-    new THREE.SphereGeometry(
-      1.85,
-      32,
-      32
-    );
-
-  const material =
-    new THREE.MeshBasicMaterial({
-
-      color: config.highlight,
-
-      transparent: true,
-
-      opacity:
-        0.015 +
-        rarity * 0.035,
-
-      blending:
-        THREE.AdditiveBlending,
-
-      side:
-        THREE.BackSide
-
-    });
+function createGlow(
+  config,
+  rarity
+) {
 
   const glow =
     new THREE.Mesh(
-      geometry,
-      material
+
+      new THREE.SphereGeometry(
+        2.15,
+        32,
+        32
+      ),
+
+      new THREE.MeshBasicMaterial({
+
+        color:
+          config.highlight,
+
+        transparent:
+          true,
+
+        opacity:
+          0.012 +
+          rarity * 0.028,
+
+        side:
+          THREE.BackSide,
+
+        blending:
+          THREE.AdditiveBlending,
+
+        depthWrite:
+          false
+
+      })
+
     );
 
-  mineralGroup.add(glow);
+
+  glow.position.y =
+    0.1;
+
+
+  mineral.add(
+    glow
+  );
 
 }
 
 
+
 /* =========================================================
-   GENERATE MINERAL
+   生成礦石
 ========================================================= */
 
 function generateMineral() {
@@ -947,115 +1659,242 @@ function generateMineral() {
   );
 
 
-  requestAnimationFrame(() => {
+  requestAnimationFrame(
+    () => {
 
-    clearMineral();
-
-
-    let selected =
-      typeSelect.value;
+      clearMineral();
 
 
-    if (
-      selected === 'random'
-    ) {
-
-      selected =
-        randomMineral();
-
-    }
+      let type =
+        typeSelect.value;
 
 
-    const config =
-      MINERALS[selected];
-
-
-    const rarity =
-      Number(
-        raritySlider.value
-      ) / 100;
-
-
-    const crystals =
-      Number(
-        crystalSlider.value
-      );
-
-
-    createRock(
-      config,
-      rarity
-    );
-
-
-    if (
-      config.crystal
-    ) {
-
-      for (
-        let i = 0;
-        i < crystals;
-        i++
+      if (
+        type === 'random'
       ) {
 
-        createCrystal(
-          config,
-          i,
-          crystals,
-          rarity
-        );
+        type =
+          choose(
+            Object.keys(
+              MINERALS
+            )
+          );
 
       }
 
+
+      const config =
+        MINERALS[type];
+
+
+      const rarity =
+        Number(
+          raritySlider.value
+        ) / 100;
+
+
+      const crystalCount =
+        Number(
+          crystalSlider.value
+        );
+
+
+      /*
+       * 先建立完整母岩。
+       */
+
+      createMatrix(
+        config,
+        rarity
+      );
+
+
+      /*
+       * 再把晶體長在母岩上。
+       */
+
+      if (
+        config.crystals
+      ) {
+
+        for (
+          let i = 0;
+          i < crystalCount;
+          i++
+        ) {
+
+          createCrystal(
+
+            config,
+
+            i,
+
+            crystalCount,
+
+            rarity
+
+          );
+
+        }
+
+      }
+
+
+      createInclusions(
+        config,
+        rarity
+      );
+
+
+      createSparkles(
+        config,
+        rarity
+      );
+
+
+      createGlow(
+        config,
+        rarity
+      );
+
+
+      badge.textContent =
+        config.name;
+
+
+      mineral.rotation.set(
+        0,
+        0,
+        0
+      );
+
+
+      mineral.position.y =
+        0;
+
+
+      setTimeout(
+        () => {
+
+          loading.classList.add(
+            'hidden'
+          );
+
+        },
+        100
+      );
+
     }
-
-
-    createInclusions(
-      config,
-      rarity
-    );
-
-
-    createCracks(
-      config,
-      rarity
-    );
-
-
-    createSparkles(
-      config,
-      rarity
-    );
-
-
-    createGlow(
-      config,
-      rarity
-    );
-
-
-    badge.textContent =
-      config.name;
-
-
-    mineralGroup.rotation.set(
-      0,
-      0,
-      0
-    );
-
-
-    loading.classList.add(
-      'hidden'
-    );
-
-  });
+  );
 
 }
 
 
+
 /* =========================================================
-   RANDOM GENERATION BUTTON
+   UI 數值
+========================================================= */
+
+function updateValues() {
+
+  const crystalValue =
+    document.querySelector(
+      '#crystalValue'
+    );
+
+  const glossValue =
+    document.querySelector(
+      '#glossValue'
+    );
+
+  const transValue =
+    document.querySelector(
+      '#transValue'
+    );
+
+  const rarityValue =
+    document.querySelector(
+      '#rarityValue'
+    );
+
+
+  if (
+    crystalValue
+  ) {
+
+    crystalValue.textContent =
+      crystalSlider.value;
+
+  }
+
+
+  if (
+    glossValue
+  ) {
+
+    glossValue.textContent =
+      (
+        Number(
+          glossSlider.value
+        ) / 100
+      ).toFixed(2);
+
+  }
+
+
+  if (
+    transValue
+  ) {
+
+    transValue.textContent =
+      (
+        Number(
+          transparencySlider.value
+        ) / 100
+      ).toFixed(2);
+
+  }
+
+
+  if (
+    rarityValue
+  ) {
+
+    rarityValue.textContent =
+      (
+        Number(
+          raritySlider.value
+        ) / 100
+      ).toFixed(2);
+
+  }
+
+}
+
+
+[
+  crystalSlider,
+  glossSlider,
+  transparencySlider,
+  raritySlider
+].forEach(
+  slider => {
+
+    slider.addEventListener(
+      'input',
+      updateValues
+    );
+
+  }
+);
+
+
+updateValues();
+
+
+
+/* =========================================================
+   生成按鈕
 ========================================================= */
 
 document
@@ -1066,82 +1905,115 @@ document
   );
 
 
+
+/* =========================================================
+   隨機生成
+========================================================= */
+
+function randomGenerate() {
+
+  typeSelect.value =
+    'random';
+
+
+  crystalSlider.value =
+    Math.floor(
+      random(
+        5,
+        11
+      )
+    );
+
+
+  glossSlider.value =
+    Math.floor(
+      random(
+        70,
+        98
+      )
+    );
+
+
+  transparencySlider.value =
+    Math.floor(
+      random(
+        30,
+        80
+      )
+    );
+
+
+  raritySlider.value =
+    Math.floor(
+      random(
+        55,
+        100
+      )
+    );
+
+
+  updateValues();
+
+
+  generateMineral();
+
+}
+
+
 document
   .querySelector('#randomTop')
   .addEventListener(
     'click',
-    () => {
-
-      typeSelect.value =
-        'random';
-
-
-      raritySlider.value =
-        Math.floor(
-          random(45, 100)
-        );
-
-
-      glossSlider.value =
-        Math.floor(
-          random(70, 100)
-        );
-
-
-      transparencySlider.value =
-        Math.floor(
-          random(15, 90)
-        );
-
-
-      crystalSlider.value =
-        Math.floor(
-          random(3, 13)
-        );
-
-
-      generateMineral();
-
-    }
+    randomGenerate
   );
 
 
+
 /* =========================================================
-   DOWNLOAD PNG
+   PNG
 ========================================================= */
+
+function savePNG() {
+
+  renderer.render(
+    scene,
+    camera
+  );
+
+
+  const link =
+    document.createElement(
+      'a'
+    );
+
+
+  link.download =
+    'my-mineral.png';
+
+
+  link.href =
+    renderer.domElement
+      .toDataURL(
+        'image/png'
+      );
+
+
+  link.click();
+
+}
+
 
 document
   .querySelector('#download')
   .addEventListener(
     'click',
-    () => {
-
-      renderer.render(
-        scene,
-        camera
-      );
-
-
-      const link =
-        document.createElement('a');
-
-      link.download =
-        'procedural-gem.png';
-
-      link.href =
-        renderer.domElement
-          .toDataURL(
-            'image/png'
-          );
-
-      link.click();
-
-    }
+    savePNG
   );
 
 
+
 /* =========================================================
-   RESIZE
+   視窗大小
 ========================================================= */
 
 window.addEventListener(
@@ -1149,31 +2021,35 @@ window.addEventListener(
   () => {
 
     camera.aspect =
-      innerWidth /
-      innerHeight;
+      window.innerWidth /
+      window.innerHeight;
+
 
     camera.updateProjectionMatrix();
 
 
     renderer.setSize(
-      innerWidth,
-      innerHeight
+      window.innerWidth,
+      window.innerHeight
     );
 
 
     renderer.setPixelRatio(
+
       Math.min(
         window.devicePixelRatio,
-        2
+        1.7
       )
+
     );
 
   }
 );
 
 
+
 /* =========================================================
-   ANIMATION
+   動畫
 ========================================================= */
 
 const clock =
@@ -1187,57 +2063,55 @@ function animate() {
   );
 
 
-  const elapsed =
+  const time =
     clock.getElapsedTime();
 
 
   /*
-   * 非常慢的自動旋轉，
-   * 使用者拖曳後仍可自由控制。
+   * 礦石非常慢地旋轉。
    */
 
-  mineralGroup.rotation.y +=
-    0.0015;
+  mineral.rotation.y +=
+    0.0012;
 
 
   /*
-   * 微小上下浮動，
-   * 讓礦石看起來不像靜態模型。
+   * 輕微漂浮。
    */
 
-  mineralGroup.position.y =
+  mineral.position.y =
     Math.sin(
-      elapsed * 0.8
-    ) * 0.035;
+      time * 0.7
+    ) * 0.018;
 
 
   /*
-   * 光源緩慢移動，
-   * 讓高光在礦石表面流動。
+   * 光源慢慢移動，
+   * 讓高光在晶體表面流動。
    */
 
   keyLight.position.x =
     Math.sin(
-      elapsed * 0.45
-    ) * 4;
+      time * 0.38
+    ) * 4.2;
 
 
   keyLight.position.z =
     Math.cos(
-      elapsed * 0.45
-    ) * 4;
+      time * 0.38
+    ) * 4.2;
 
 
-  fillLight.position.x =
+  purpleLight.position.x =
     Math.sin(
-      elapsed * 0.3
-    ) * 5;
+      time * 0.28
+    ) * 4.5;
 
 
   pinkLight.position.z =
     Math.cos(
-      elapsed * 0.5
-    ) * 5;
+      time * 0.45
+    ) * 4.5;
 
 
   controls.update();
@@ -1251,8 +2125,9 @@ function animate() {
 }
 
 
+
 /* =========================================================
-   START
+   啟動
 ========================================================= */
 
 generateMineral();
