@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>擬真礦石生成器</title>
+<style>
+*{box-sizing:border-box}
+:root{
+  --bg:#070b14;--panel:#111827;--panel2:#172033;--line:#273449;
+  --text:#eef2ff;--muted:#9aa7bd;--accent:#9b5cff;--accent2:#d16cff;
+}
+body{
+  margin:0;background:radial-gradient(circle at 70% 20%,#1b1635 0,#070b14 42%,#05070d 100%);
+  color:var(--text);font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;
+  min-height:100vh;
+}
+.app{max-width:1450px;margin:auto;padding:18px}
+header{
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  padding:18px 22px;border:1px solid var(--line);border-radius:14px;
+  background:rgba(17,24,39,.86);backdrop-filter:blur(12px);margin-bottom:16px;
+}
+.brand{display:flex;align-items:center;gap:14px}
+.logo{font-size:42px;filter:drop-shadow(0 0 14px #a45cff)}
+h1{font-size:24px;margin:0}.sub{color:var(--muted);font-size:14px;margin-top:4px}
+.top-actions{display:flex;gap:10px;flex-wrap:wrap}
+button,select,input{font:inherit}
+button{
+  border:1px solid var(--line);background:#1a2435;color:#fff;padding:11px 16px;
+  border-radius:9px;cursor:pointer;transition:.2s
+}
+button:hover{transform:translateY(-1px);border-color:#8b5cf6}
+.primary{background:linear-gradient(135deg,#7042e8,#bd4de8);border:0}
+.layout{display:grid;grid-template-columns:370px 1fr;gap:16px}
+.panel{
+  background:rgba(17,24,39,.9);border:1px solid var(--line);border-radius:14px;
+  padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.22)
+}
+.controls{max-height:calc(100vh - 150px);overflow:auto}
+.section{margin-bottom:22px}.section h3{font-size:14px;margin:0 0 11px}
+select{
+  width:100%;padding:12px;background:#192336;color:#fff;border:1px solid #314056;
+  border-radius:9px;outline:none
+}
+.colors{display:flex;gap:9px;flex-wrap:wrap}
+.color{
+  width:34px;height:34px;border-radius:50%;border:2px solid transparent;cursor:pointer;
+  box-shadow:0 2px 8px #0008
+}
+.color.active{border-color:#fff;box-shadow:0 0 0 2px #9b5cff,0 0 16px #9b5cff}
+.shapes{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.shape{padding:10px 5px;font-size:12px;text-align:center;background:#182235}
+.shape.active{border-color:#a855f7;background:#251b3c}
+.range-row{margin:14px 0}.range-head{display:flex;justify-content:space-between;font-size:13px}
+input[type=range]{width:100%;accent-color:#a855f7}
+.features{display:flex;flex-wrap:wrap;gap:7px}
+.feature.active{background:#7444e6;border-color:#9b5cff}
+.generate{width:100%;font-size:16px;padding:14px;margin-top:4px}
+.tip{font-size:12px;color:#aab4c7;line-height:1.7;background:#172235;padding:12px;border-radius:9px;margin-top:14px}
+.stage-panel{padding:16px;display:flex;flex-direction:column;min-height:760px}
+.tabs{display:flex;gap:20px;border-bottom:1px solid var(--line);margin:0 2px 12px}
+.tab{padding:11px 2px;color:var(--muted);border-bottom:2px solid transparent}
+.tab.active{color:#c98aff;border-color:#a855f7}
+#stage{position:relative;flex:1;min-height:610px;border-radius:12px;overflow:hidden;background:#020307}
+canvas{display:block;width:100%;height:100%}
+.status{
+  display:flex;justify-content:space-between;gap:10px;align-items:center;
+  background:#141e2e;padding:12px;border-radius:0 0 10px 10px;font-size:12px;color:#c4ccda
+}
+.presets{margin-top:15px}.preset-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.preset{padding:6px;background:#182235;border-radius:8px;text-align:center;font-size:11px}
+.preset .swatch{height:70px;border-radius:6px;margin-bottom:6px}
+.footer{color:#69758b;text-align:center;font-size:12px;padding:14px}
+@media(max-width:1000px){.layout{grid-template-columns:1fr}.controls{max-height:none}.stage-panel{min-height:650px}.preset-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){.app{padding:8px}header{align-items:flex-start;flex-direction:column}.top-actions{width:100%}.top-actions button{flex:1}.shapes{grid-template-columns:repeat(2,1fr)}.stage-panel{min-height:560px}.preset-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand">
+    <div class="logo">💎</div>
+    <div><h1>擬真礦石生成器</h1><div class="sub">創造屬於你的礦石世界 · 純前端免費版</div></div>
+  </div>
+  <div class="top-actions">
+    <button id="randomBtn">🎲 隨機生成</button>
+    <button id="lightBtn">☀️ 光照切換</button>
+    <button id="downloadBtn" class="primary">⬇ 下載圖片</button>
+  </div>
+</header>
+
+<div class="layout">
+<aside class="panel controls">
+  <div class="section">
+    <h3>礦石類型</h3>
+    <select id="mineral">
+      <option value="amethyst">紫水晶</option>
+      <option value="fluorite">綠螢石</option>
+      <option value="sapphire">藍晶石</option>
+      <option value="agate">紅瑪瑙</option>
+      <option value="citrine">黃水晶</option>
+      <option value="quartz">白水晶</option>
+      <option value="obsidian">黑曜石</option>
+      <option value="moon">月光石</option>
+    </select>
+  </div>
+
+  <div class="section">
+    <h3>顏色選擇</h3>
+    <div class="colors" id="colors">
+      <div class="color active" data-color="#8b4de8" style="background:#8b4de8"></div>
+      <div class="color" data-color="#48b78a" style="background:#48b78a"></div>
+      <div class="color" data-color="#3d86df" style="background:#3d86df"></div>
+      <div class="color" data-color="#c74448" style="background:#c74448"></div>
+      <div class="color" data-color="#e2a72e" style="background:#e2a72e"></div>
+      <div class="color" data-color="#e9f3ff" style="background:#e9f3ff"></div>
+      <div class="color" data-color="#20243a" style="background:#20243a"></div>
+      <div class="color" data-color="#69d9ef" style="background:#69d9ef"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>晶體形態</h3>
+    <div class="shapes" id="shapes">
+      <button class="shape active" data-shape="cluster">簇狀晶體</button>
+      <button class="shape" data-shape="single">單晶體</button>
+      <button class="shape" data-shape="raw">原礦</button>
+      <button class="shape" data-shape="gem">拋光石</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="range-row"><div class="range-head"><span>透明度</span><b id="opacityVal">75%</b></div><input id="opacity" type="range" min="5" max="100" value="75"></div>
+    <div class="range-row"><div class="range-head"><span>光澤度</span><b id="shineVal">85%</b></div><input id="shine" type="range" min="5" max="100" value="85"></div>
+    <div class="range-row"><div class="range-head"><span>內部紋理</span><b id="textureVal">60%</b></div><input id="texture" type="range" min="0" max="100" value="60"></div>
+    <div class="range-row"><div class="range-head"><span>晶體大小</span><b id="sizeVal">70%</b></div><input id="size" type="range" min="20" max="100" value="70"></div>
+    <div class="range-row"><div class="range-head"><span>晶體數量</span><b id="countVal">55%</b></div><input id="count" type="range" min="10" max="100" value="55"></div>
+  </div>
+
+  <div class="section">
+    <h3>特殊特徵</h3>
+    <div class="features">
+      <button class="feature active" data-feature="inclusion">內含物</button>
+      <button class="feature" data-feature="crack">冰裂紋</button>
+      <button class="feature" data-feature="rainbow">彩虹效應</button>
+      <button class="feature" data-feature="star">星光效果</button>
+      <button class="feature" data-feature="vein">金屬礦脈</button>
+    </div>
+  </div>
+
+  <button class="primary generate" id="generateBtn">✨ 生成礦石</button>
+  <div class="tip">💡 提示：拖曳模型可以旋轉，滑鼠滾輪可以縮放。調整參數後按「生成礦石」即可建立新的礦石。</div>
+</aside>
+
+<main class="panel stage-panel">
+  <div class="tabs"><div class="tab active">生成結果</div><div class="tab">歷史紀錄</div></div>
+  <div id="stage"></div>
+  <div class="status"><span id="statusText">💎 紫水晶簇｜透明度 75%｜光澤度 85%</span><button id="favoriteBtn">♡ 收藏</button></div>
+  <div class="presets">
+    <h3 style="font-size:14px">預設模式</h3>
+    <div class="preset-grid">
+      <button class="preset" data-preset="amethyst"><div class="swatch" style="background:linear-gradient(135deg,#2a0757,#b779ff,#35106b)"></div>紫水晶簇</button>
+      <button class="preset" data-preset="fluorite"><div class="swatch" style="background:linear-gradient(135deg,#164e3d,#7ae0ae,#153c62)"></div>綠螢石</button>
+      <button class="preset" data-preset="sapphire"><div class="swatch" style="background:linear-gradient(135deg,#071c5c,#56a4ff,#091b58)"></div>藍晶石</button>
+      <button class="preset" data-preset="agate"><div class="swatch" style="background:linear-gradient(135deg,#55141b,#df6b5d,#4a0e16)"></div>紅瑪瑙</button>
+      <button class="preset" data-preset="citrine"><div class="swatch" style="background:linear-gradient(135deg,#744300,#ffe37a,#9a5d00)"></div>黃水晶</button>
+      <button class="preset" data-preset="quartz"><div class="swatch" style="background:linear-gradient(135deg,#677080,#fff,#a9c5e4)"></div>白水晶</button>
+    </div>
+  </div>
+</main>
+</div>
+<div class="footer">擬真礦石生成器 v1.0 · Three.js 純前端實作 · 不需要伺服器與 AI API</div>
+</div>
+
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+
+const stage=document.getElementById('stage');
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x020307);
+scene.fog=new THREE.FogExp2(0x020307,0.035);
+
+const camera=new THREE.PerspectiveCamera(45,1,0.1,100);
+camera.position.set(7,5,9);
+
+const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(stage.clientWidth,stage.clientHeight);
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.25;
+stage.appendChild(renderer.domElement);
+
+const controls=new OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;controls.dampingFactor=.055;
+controls.minDistance=4;controls.maxDistance=17;
+controls.target.set(0,1,0);
+
+const world=new THREE.Group();scene.add(world);
+const mineralGroup=new THREE.Group();world.add(mineralGroup);
+
+const floor=new THREE.Mesh(
+  new THREE.CylinderGeometry(6,6,.15,96),
+  new THREE.MeshStandardMaterial({color:0x11151d,roughness:.24,metalness:.18})
+);
+floor.position.y=-1.35;floor.receiveShadow=true;scene.add(floor);
+
+const back=new THREE.Mesh(
+  new THREE.PlaneGeometry(30,20),
+  new THREE.MeshBasicMaterial({color:0x030408})
+);
+back.position.set(0,3,-5);back.rotation.x=0;scene.add(back);
+
+const key=new THREE.DirectionalLight(0xffffff,4.2);
+key.position.set(5,8,7);key.castShadow=true;key.shadow.mapSize.set(2048,2048);scene.add(key);
+const fill=new THREE.PointLight(0x9f6cff,18,18);fill.position.set(-5,3,4);scene.add(fill);
+const rim=new THREE.PointLight(0x5fb7ff,16,15);rim.position.set(4,4,-5);scene.add(rim);
+const warm=new THREE.PointLight(0xffbd68,5,10);warm.position.set(-2,-.5,2);scene.add(warm);
+scene.add(new THREE.HemisphereLight(0x9aa8ff,0x17100c,1.1));
+
+const state={
+ mineral:'amethyst',color:'#8b4de8',shape:'cluster',
+ opacity:75,shine:85,texture:60,size:70,count:55,
+ features:new Set(['inclusion']),lightMode:0
+};
+
+const mineralNames={amethyst:'紫水晶',fluorite:'綠螢石',sapphire:'藍晶石',agate:'紅瑪瑙',citrine:'黃水晶',quartz:'白水晶',obsidian:'黑曜石',moon:'月光石'};
+const mineralDefaults={
+ amethyst:'#8b4de8',fluorite:'#48b78a',sapphire:'#3d86df',agate:'#c74448',
+ citrine:'#e2a72e',quartz:'#e9f3ff',obsidian:'#20243a',moon:'#69d9ef'
+};
+
+function hexToColor(hex){return new THREE.Color(hex)}
+function rand(a,b){return a+Math.random()*(b-a)}
+function clearGroup(g){while(g.children.length){const c=g.children.pop();c.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material.dispose()}})}}
+
+function crystalGeometry(){
+  const h=rand(1.8,3.4)*(0.72+state.size/100*.5);
+  const r=rand(.42,.72);
+  const sides=6;
+  const verts=[];
+  const rings=[[-h/2,r*.8],[h*.32,r],[h/2,r*.32]];
+  for(const [y,rr] of rings){
+    for(let i=0;i<sides;i++){
+      const a=i/sides*Math.PI*2+rand(-.035,.035);
+      verts.push(Math.cos(a)*rr,y,Math.sin(a)*rr);
+    }
+  }
+  const pos=[];
+  // lower ring to middle ring
+  for(let ring=0;ring<2;ring++){
+    for(let i=0;i<sides;i++){
+      const n=(i+1)%sides,a=ring*sides+i,b=ring*sides+n,c=(ring+1)*sides+n,d=(ring+1)*sides+i;
+      pos.push(verts[a],verts[b],verts[c],verts[a],verts[c],verts[d]);
+    }
+  }
+  // top pyramid
+  const top=[0,h/2+.06,0];
+  for(let i=0;i<sides;i++){
+    const n=(i+1)%sides;
+    pos.push(verts[2*sides+i],verts[2*sides+n],top);
+  }
+  // bottom
+  const bottom=[0,-h/2,0];
+  for(let i=0;i<sides;i++){
+    const n=(i+1)%sides;
+    pos.push(verts[i],bottom,verts[n]);
+  }
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+  g.computeVertexNormals();
+  return g;
+}
+
+function makeMaterial(){
+  const c=hexToColor(state.color);
+  const opacity=state.opacity/100;
+  const rough=.55-state.shine/220;
+  const metal=state.mineral==='obsidian' ? .25 : .02;
+  const mat=new THREE.MeshPhysicalMaterial({
+    color:c,roughness:Math.max(.08,rough),metalness:metal,
+    transmission:Math.max(0,opacity-.12),
+    transparent:opacity<.98,opacity:.42+opacity*.55,
+    thickness:1.15,ior:1.48,
+    clearcoat:Math.min(1,state.shine/100),clearcoatRoughness:.12,
+    attenuationColor:c,attenuationDistance:2.5,
+    flatShading:false
+  });
+  return mat;
+}
+
+function addCrystal(x,y,z,s,rotY){
+  const mesh=new THREE.Mesh(crystalGeometry(),makeMaterial());
+  mesh.position.set(x,y,z);mesh.scale.setScalar(s);
+  mesh.rotation.y=rotY;mesh.rotation.x=rand(-.13,.13);
+  mesh.castShadow=true;mesh.receiveShadow=true;
+  mineralGroup.add(mesh);
+
+  if(state.features.has('rainbow') && Math.random()<.28){
+    const prism=new THREE.Mesh(
+      new THREE.SphereGeometry(.08*s,8,8),
+      new THREE.MeshBasicMaterial({color:new THREE.Color().setHSL(Math.random(),.8,.65)})
+    );
+    prism.position.set(x+rand(-.2,.2),y+rand(-.3,.6),z+rand(-.2,.2));
+    mineralGroup.add(prism);
+  }
+}
+
+function addVeins(){
+  if(!state.features.has('vein'))return;
+  const c=state.mineral==='amethyst'?0xf3c96a:0xd9c29a;
+  const mat=new THREE.MeshStandardMaterial({color:c,metalness:.8,roughness:.22,emissive:c,emissiveIntensity:.08});
+  for(let i=0;i<10;i++){
+    const curve=new THREE.CatmullRomCurve3([
+      new THREE.Vector3(rand(-1.7,1.7),rand(-1.05,1),rand(-1.2,1.2)),
+      new THREE.Vector3(rand(-1.2,1.2),rand(-.8,1.4),rand(-1.2,1.2)),
+      new THREE.Vector3(rand(-.5,.5),rand(-.8,1.5),rand(-.8,.8))
+    ]);
+    const tube=new THREE.Mesh(new THREE.TubeGeometry(curve,18,.025,5,false),mat);
+    mineralGroup.add(tube);
+  }
+}
+
+function addInclusions(){
+  if(!state.features.has('inclusion'))return;
+  const c=state.mineral==='quartz'?0xffffff:0xd8c5ff;
+  for(let i=0;i<35;i++){
+    const m=new THREE.Mesh(
+      new THREE.SphereGeometry(rand(.015,.055),6,6),
+      new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:rand(.12,.5)})
+    );
+    m.position.set(rand(-1.6,1.6),rand(-.9,1.5),rand(-1.1,1.1));
+    mineralGroup.add(m);
+  }
+}
+
+function addCracks(){
+  if(!state.features.has('crack'))return;
+  const mat=new THREE.LineBasicMaterial({color:0xffffff,transparent:true,opacity:.35});
+  for(let k=0;k<14;k++){
+    const pts=[new THREE.Vector3(rand(-1.6,1.6),rand(-.8,1.3),rand(-1.1,1.1))];
+    for(let j=0;j<4;j++)pts.push(pts[pts.length-1].clone().add(new THREE.Vector3(rand(-.3,.3),rand(-.25,.3),rand(-.3,.3))));
+    mineralGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),mat));
+  }
+}
+
+function addStar(){
+  if(!state.features.has('star'))return;
+  const mat=new THREE.SpriteMaterial({color:0xffffff,transparent:true,opacity:.9});
+  for(let i=0;i<12;i++){
+    const s=new THREE.Sprite(mat.clone());s.scale.setScalar(rand(.08,.22));
+    s.position.set(rand(-1.8,1.8),rand(-.5,1.8),rand(-1,1));
+    mineralGroup.add(s);
+  }
+}
+
+function generate(){
+  clearGroup(mineralGroup);
+  const n=state.shape==='single'?1:state.shape==='gem'?1:Math.floor(6+state.count*.23);
+  if(state.shape==='gem'){
+    const geo=new THREE.DodecahedronGeometry(1.45,1);
+    const mesh=new THREE.Mesh(geo,makeMaterial());
+    mesh.scale.set(1.05,.78,.95);mesh.position.y=.15;mesh.castShadow=true;mineralGroup.add(mesh);
+  }else if(state.shape==='raw'){
+    const geo=new THREE.IcosahedronGeometry(1.6,1);
+    const mesh=new THREE.Mesh(geo,makeMaterial());
+    mesh.scale.set(1.2,.82,.95);mesh.position.y=.05;mesh.rotation.set(.2,.4,.1);mesh.castShadow=true;mineralGroup.add(mesh);
+  }else{
+    for(let i=0;i<n;i++){
+      const angle=i/n*Math.PI*2+rand(-.35,.35);
+      const radius=state.shape==='single'?0:rand(.15,1.35);
+      const s=state.shape==='single'?1.15:rand(.55,1.15)*(0.75+state.size/100*.5);
+      addCrystal(Math.cos(angle)*radius,rand(-.7,.1)+s*.3,Math.sin(angle)*radius,s,angle+rand(-.3,.3));
+    }
+  }
+  addInclusions();addCracks();addVeins();addStar();
+  mineralGroup.rotation.y=rand(0,Math.PI*2);
+  updateStatus();
+}
+
+function updateStatus(){
+  document.getElementById('statusText').textContent=
+    `💎 ${mineralNames[state.mineral]}｜透明度 ${state.opacity}%｜光澤度 ${state.shine}%｜${new Date().toLocaleTimeString()}`;
+}
+
+document.querySelectorAll('.color').forEach(el=>el.onclick=()=>{
+  document.querySelectorAll('.color').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');state.color=el.dataset.color;generate();
+});
+document.querySelectorAll('.shape').forEach(el=>el.onclick=()=>{
+  document.querySelectorAll('.shape').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');state.shape=el.dataset.shape;generate();
+});
+document.querySelectorAll('.feature').forEach(el=>el.onclick=()=>{
+  el.classList.toggle('active');
+  state.features.has(el.dataset.feature)?state.features.delete(el.dataset.feature):state.features.add(el.dataset.feature);
+  generate();
+});
+document.getElementById('mineral').onchange=e=>{
+  state.mineral=e.target.value;state.color=mineralDefaults[state.mineral];
+  document.querySelectorAll('.color').forEach(x=>x.classList.toggle('active',x.dataset.color===state.color));
+  generate();
+};
+
+[['opacity','opacityVal'],['shine','shineVal'],['texture','textureVal'],['size','sizeVal'],['count','countVal']].forEach(([id,label])=>{
+  document.getElementById(id).oninput=e=>{state[id]=+e.target.value;document.getElementById(label).textContent=e.target.value+'%';};
+  document.getElementById(id).onchange=generate;
+});
+
+document.getElementById('generateBtn').onclick=generate;
+document.getElementById('randomBtn').onclick=()=>{
+  const minerals=Object.keys(mineralNames);
+  state.mineral=minerals[Math.floor(Math.random()*minerals.length)];
+  state.color=mineralDefaults[state.mineral];
+  state.shape=['cluster','single','raw','gem'][Math.floor(Math.random()*4)];
+  state.opacity=Math.floor(rand(35,96));state.shine=Math.floor(rand(55,100));
+  state.texture=Math.floor(rand(25,100));state.size=Math.floor(rand(45,100));state.count=Math.floor(rand(25,100));
+  ['inclusion','crack','rainbow','star','vein'].forEach(f=>Math.random()<.45?state.features.add(f):state.features.delete(f));
+  document.getElementById('mineral').value=state.mineral;
+  ['opacity','shine','texture','size','count'].forEach(id=>document.getElementById(id).value=state[id]);
+  document.getElementById('opacityVal').textContent=state.opacity+'%';
+  document.getElementById('shineVal').textContent=state.shine+'%';
+  document.getElementById('textureVal').textContent=state.texture+'%';
+  document.getElementById('sizeVal').textContent=state.size+'%';
+  document.getElementById('countVal').textContent=state.count+'%';
+  document.querySelectorAll('.feature').forEach(el=>el.classList.toggle('active',state.features.has(el.dataset.feature)));
+  generate();
+};
+
+document.getElementById('lightBtn').onclick=()=>{
+  state.lightMode=(state.lightMode+1)%3;
+  if(state.lightMode===0){key.intensity=4.2;fill.color.set(0x9f6cff);rim.color.set(0x5fb7ff);warm.intensity=5}
+  if(state.lightMode===1){key.intensity=2.0;fill.color.set(0x65a8ff);rim.color.set(0x9ffff0);warm.intensity=12}
+  if(state.lightMode===2){key.intensity=6.0;fill.color.set(0xff58ca);rim.color.set(0x4d7cff);warm.intensity=1}
+};
+
+document.getElementById('downloadBtn').onclick=()=>{
+  renderer.render(scene,camera);
+  const a=document.createElement('a');
+  a.download=`mineral-${state.mineral}-${Date.now()}.png`;
+  a.href=renderer.domElement.toDataURL('image/png');
+  a.click();
+};
+document.getElementById('favoriteBtn').onclick=e=>{
+  e.currentTarget.textContent=e.currentTarget.textContent.includes('♡')?'♥ 已收藏':'♡ 收藏';
+};
+
+document.querySelectorAll('.preset').forEach(btn=>btn.onclick=()=>{
+  state.mineral=btn.dataset.preset;state.color=mineralDefaults[state.mineral];
+  state.shape='cluster';state.opacity=75;state.shine=90;state.texture=70;state.size=72;state.count=65;
+  document.getElementById('mineral').value=state.mineral;
+  ['opacity','shine','texture','size','count'].forEach(id=>document.getElementById(id).value=state[id]);
+  document.getElementById('opacityVal').textContent='75%';document.getElementById('shineVal').textContent='90%';
+  document.getElementById('textureVal').textContent='70%';document.getElementById('sizeVal').textContent='72%';document.getElementById('countVal').textContent='65%';
+  generate();
+});
+
+function resize(){
+  const w=stage.clientWidth,h=stage.clientHeight;
+  camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h);
+}
+window.addEventListener('resize',resize);
+
+function animate(){
+  requestAnimationFrame(animate);
+  controls.update();
+  mineralGroup.rotation.y+=.0018;
+  renderer.render(scene,camera);
+}
+generate();resize();animate();
+</script>
+</body>
+</html>
