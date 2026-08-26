@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b0b0f">
+  <title>AI Mineral Studio</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">◇</div>
+      <div>
+        <div class="title">AI Mineral Studio</div>
+        <div class="subtitle">Generate Realistic Mineral Specimens</div>
+      </div>
+    </div>
+    <div class="actions">
+      <button id="lightBtn" class="iconBtn" title="切換光源">☼ <span>光源</span></button>
+      <button id="envBtn" class="iconBtn" title="切換環境">◇ <span>環境</span></button>
+      <button id="randomBtn" class="iconBtn" title="隨機參數">⤨ <span>隨機</span></button>
+      <button id="generateTop" class="primary small">✦ 生成</button>
+    </div>
+  </header>
+
+  <main class="app">
+    <aside class="panel">
+      <label>礦石種類
+        <select id="mineral">
+          <option value="amethyst">紫水晶 Amethyst</option>
+          <option value="quartz">石英 Quartz</option>
+          <option value="fluorite">螢石 Fluorite</option>
+          <option value="obsidian">黑曜石 Obsidian</option>
+          <option value="citrine">黃水晶 Citrine</option>
+        </select>
+      </label>
+
+      <label>形態
+        <select id="form">
+          <option value="cluster">晶簇 Cluster</option>
+          <option value="single">單晶 Single</option>
+          <option value="geode">晶洞 Geode</option>
+        </select>
+      </label>
+
+      <div id="sliders"></div>
+
+      <div class="toggleRow"><span>內含物</span><button class="toggle on" data-key="inclusions"></button></div>
+      <div class="toggleRow"><span>裂紋</span><button class="toggle on" data-key="cracks"></button></div>
+
+      <label>環境
+        <select id="environment">
+          <option value="studio">攝影棚 Studio</option>
+          <option value="dark">深色背景 Dark</option>
+          <option value="warm">暖色展示 Warm</option>
+        </select>
+      </label>
+
+      <button id="generate" class="primary generate">✦ 生成真實礦石 <small>將生成獨一無二的礦物標本</small></button>
+    </aside>
+
+    <section class="viewer">
+      <div class="hint">☝ 拖曳旋轉 · 雙指縮放 · 點擊背景重置</div>
+      <canvas id="scene"></canvas>
+      <div id="status" class="status">READY · 3D PBR</div>
+      <div id="thumbs" class="thumbs"></div>
+    </section>
+  </main>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
